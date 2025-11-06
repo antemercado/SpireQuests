@@ -69,7 +69,7 @@ public class Anniv8Mod implements
 
     public static final Map<String, Keyword> keywords = new HashMap<>();
 
-    public static List<String> allQuestNames = new ArrayList<>();
+    public static List<String> allQuestIDs = new ArrayList<>();
 
     public static String makeID(String idText) {
         return modID + ":" + idText;
@@ -208,25 +208,21 @@ public class Anniv8Mod implements
         return "eng";
     }
 
-    private static void addQuestID(AutoAdd.Info info, AbstractQuest quest) {
-        allQuestNames.add(quest.id);
-    }
-
     @Override
     public void receiveEditStrings() {
         Collection<CtClass> questClasses = new AutoAdd(modID)
                 .packageFilter(Anniv8Mod.class)
                 .findClasses(AbstractQuest.class);
 
-        questClasses.stream().forEach(ctClass -> allQuestNames.add(ctClass.getSimpleName().toLowerCase(Locale.ROOT)));
+        questClasses.stream().forEach(ctClass -> allQuestIDs.add(ctClass.getSimpleName().toLowerCase(Locale.ROOT)));
 
         loadStrings("eng");
 
-        loadQuestStrings(allQuestNames, "eng");
+        loadQuestStrings(allQuestIDs, "eng");
         if (Settings.language != Settings.GameLanguage.ENG)
         {
             loadStrings(Settings.language.toString().toLowerCase());
-            loadQuestStrings(allQuestNames, Settings.language.toString().toLowerCase());
+            loadQuestStrings(allQuestIDs, Settings.language.toString().toLowerCase());
         }
     }
 
@@ -245,15 +241,15 @@ public class Anniv8Mod implements
     }
 
 
-    public void loadQuestStrings(List<String> questNames, String langKey) {
+    public void loadQuestStrings(List<String> questIDs, String langKey) {
 
-        for (String questName : questNames) {
-            String languageAndQuest = langKey + "/" + questName;
+        for (String questID : questIDs) {
+            String languageAndQuest = langKey + "/" + questID;
             String filepath = modID + "Resources/localization/" + languageAndQuest + "/";
             if (!Gdx.files.internal(filepath).exists()) {
                 continue;
             }
-            logger.info("Loading strings for pack " + questName + "from \"resources/localization/" + languageAndQuest + "\"");
+            logger.info("Loading strings for quest " + questID + "from \"resources/localization/" + languageAndQuest + "\"");
 
             loadStringsFile(languageAndQuest, CardStrings.class);
             loadStringsFile(languageAndQuest, RelicStrings.class);
@@ -276,13 +272,13 @@ public class Anniv8Mod implements
 
     @Override
     public void receiveEditKeywords() {
-        loadKeywords(allQuestNames, "eng");
+        loadKeywords(allQuestIDs, "eng");
         if (Settings.language != Settings.GameLanguage.ENG) {
-            loadKeywords(allQuestNames, Settings.language.toString().toLowerCase());
+            loadKeywords(allQuestIDs, Settings.language.toString().toLowerCase());
         }
     }
 
-    private void loadKeywords(List<String> questNames, String langKey) {
+    private void loadKeywords(List<String> questIDs, String langKey) {
         String filepath = modID + "Resources/localization/" + langKey + "/Keywordstrings.json";
         Gson gson = new Gson();
         List<Keyword> keywords = new ArrayList<>();
@@ -290,12 +286,12 @@ public class Anniv8Mod implements
             String json = Gdx.files.internal(filepath).readString(String.valueOf(StandardCharsets.UTF_8));
             keywords.addAll(Arrays.asList(gson.fromJson(json, Keyword[].class)));
         }
-        for (String questName : questNames) {
-            String languageAndQuest = langKey + "/" + questName;
+        for (String questID : questIDs) {
+            String languageAndQuest = langKey + "/" + questID;
             String questJson = modID + "Resources/localization/" + languageAndQuest + "/Keywordstrings.json";
             FileHandle handle = Gdx.files.internal(questJson);
             if (handle.exists()) {
-                logger.info("Loading keywords for quest " + questName + "from \"resources/localization/" + languageAndQuest + "\"");
+                logger.info("Loading keywords for quest " + questID + "from \"resources/localization/" + languageAndQuest + "\"");
                 questJson = handle.readString(String.valueOf(StandardCharsets.UTF_8));
                 List<Keyword> questKeywords = new ArrayList<>(Arrays.asList(gson.fromJson(questJson, Keyword[].class)));
                 keywords.addAll(questKeywords);
@@ -304,6 +300,9 @@ public class Anniv8Mod implements
 
         for (Keyword keyword : keywords) {
             BaseMod.addKeyword(modID, keyword.PROPER_NAME, keyword.NAMES, keyword.DESCRIPTION);
+            if (!keyword.ID.isEmpty()) {
+                Anniv8Mod.keywords.put(keyword.ID, keyword);
+            }
         }
     }
 
