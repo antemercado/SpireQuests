@@ -5,7 +5,8 @@
     "modargo",
     "(Gk) erasels",
     "Mindbomber",
-    "Alchyr"
+    "Alchyr",
+    "Pandemonium"
   ],
   "description": "${project.description}",
   "version": "${project.version}",

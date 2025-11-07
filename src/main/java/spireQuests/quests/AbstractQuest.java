@@ -213,7 +213,7 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
          * @param trigger
          * @param condition Receives the trigger parameter and only resets the tracker if true is returned.
          */
-        protected final <A> Tracker setResetTrigger(Trigger<A> trigger, Function<A, Boolean> condition) {
+        public final <A> Tracker setResetTrigger(Trigger<A> trigger, Function<A, Boolean> condition) {
             this.reset = trigger.getTriggerMethod((param)->{
                 if (condition.apply(param)) {
                     this.reset();
@@ -253,7 +253,7 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
             return other;
         }
 
-        protected final Tracker add(AbstractQuest quest) {
+        public final Tracker add(AbstractQuest quest) {
             return quest.addTracker(this);
         }
     }

@@ -6,6 +6,7 @@ import basemod.ModPanel;
 import basemod.helpers.RelicType;
 import basemod.interfaces.*;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.evacipated.cardcrawl.mod.stslib.Keyword;
 import com.evacipated.cardcrawl.modthespire.Loader;
@@ -16,11 +17,13 @@ import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.localization.*;
 import com.megacrit.cardcrawl.unlock.UnlockTracker;
+import javassist.CtClass;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import spireQuests.abstracts.AbstractSQRelic;
 import spireQuests.cardvars.SecondDamage;
 import spireQuests.cardvars.SecondMagicNumber;
+import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
 import spireQuests.util.TexLoader;
 
@@ -66,7 +69,7 @@ public class Anniv8Mod implements
 
     public static final Map<String, Keyword> keywords = new HashMap<>();
 
-    public static List<String> unfilteredAllQuestsIDs = new ArrayList<>();
+    public static HashSet<String> questPackages = new HashSet<>();
 
     public static String makeID(String idText) {
         return modID + ":" + idText;
@@ -207,13 +210,22 @@ public class Anniv8Mod implements
 
     @Override
     public void receiveEditStrings() {
+        Collection<CtClass> questClasses = new AutoAdd(modID)
+                .packageFilter(Anniv8Mod.class)
+                .findClasses(AbstractQuest.class);
+
+        questClasses.stream().forEach(ctClass -> questPackages.add(ctClass.getPackageName().substring(ctClass.getPackageName().lastIndexOf('.') + 1)));
+
         loadStrings("eng");
-        loadInteractableStrings(unfilteredAllQuestsIDs, "eng");
-        if (Settings.language != Settings.GameLanguage.ENG) {
+
+        loadQuestStrings(questPackages, "eng");
+        if (Settings.language != Settings.GameLanguage.ENG)
+        {
             loadStrings(Settings.language.toString().toLowerCase());
-            loadInteractableStrings(unfilteredAllQuestsIDs, Settings.language.toString().toLowerCase());
+            loadQuestStrings(questPackages, Settings.language.toString().toLowerCase());
         }
     }
+
 
     private void loadStrings(String langKey) {
         if (!Gdx.files.internal(modID + "Resources/localization/" + langKey + "/").exists()) return;
@@ -224,29 +236,30 @@ public class Anniv8Mod implements
         loadStringsFile(langKey, StanceStrings.class);
         loadStringsFile(langKey, OrbStrings.class);
         loadStringsFile(langKey, PotionStrings.class);
-        loadStringsFile(langKey, EventStrings.class);
         loadStringsFile(langKey, MonsterStrings.class);
         loadStringsFile(langKey, BlightStrings.class);
     }
 
-    public void loadInteractableStrings(Collection<String> interactableIDs, String langKey) {
-        for (String id : interactableIDs) {
-            String languageAndInteractable = langKey + "/" + id;
-            String filepath = modID + "Resources/localization/" + languageAndInteractable;
+
+    public void loadQuestStrings(Set<String> packages, String langKey) {
+
+        for (String packageName : packages) {
+            String languageAndFolder = langKey + "/" + packageName;
+            String filepath = modID + "Resources/localization/" + languageAndFolder + "/";
             if (!Gdx.files.internal(filepath).exists()) {
                 continue;
             }
-            logger.info("Loading strings for interactable " + id + " from \"resources/localization/" + languageAndInteractable + "\"");
+            logger.info("Loading strings for package " + packageName + "from \"resources/localization/" + languageAndFolder + "\"");
 
-            loadStringsFile(languageAndInteractable, CardStrings.class);
-            loadStringsFile(languageAndInteractable, RelicStrings.class);
-            loadStringsFile(languageAndInteractable, PowerStrings.class);
-            loadStringsFile(languageAndInteractable, UIStrings.class);
-            loadStringsFile(languageAndInteractable, StanceStrings.class);
-            loadStringsFile(languageAndInteractable, OrbStrings.class);
-            loadStringsFile(languageAndInteractable, PotionStrings.class);
-            loadStringsFile(languageAndInteractable, MonsterStrings.class);
-            loadStringsFile(languageAndInteractable, BlightStrings.class);
+            loadStringsFile(languageAndFolder, CardStrings.class);
+            loadStringsFile(languageAndFolder, RelicStrings.class);
+            loadStringsFile(languageAndFolder, PowerStrings.class);
+            loadStringsFile(languageAndFolder, UIStrings.class);
+            loadStringsFile(languageAndFolder, StanceStrings.class);
+            loadStringsFile(languageAndFolder, OrbStrings.class);
+            loadStringsFile(languageAndFolder, PotionStrings.class);
+            loadStringsFile(languageAndFolder, MonsterStrings.class);
+            loadStringsFile(languageAndFolder, BlightStrings.class);
         }
     }
 
@@ -259,19 +272,30 @@ public class Anniv8Mod implements
 
     @Override
     public void receiveEditKeywords() {
-        loadKeywords("eng");
+        loadKeywords(questPackages, "eng");
         if (Settings.language != Settings.GameLanguage.ENG) {
-            loadKeywords(Settings.language.toString().toLowerCase());
+            loadKeywords(questPackages, Settings.language.toString().toLowerCase());
         }
     }
 
-    private void loadKeywords(String langKey) {
+    private void loadKeywords(Set<String> packages, String langKey) {
         String filepath = modID + "Resources/localization/" + langKey + "/Keywordstrings.json";
         Gson gson = new Gson();
         List<Keyword> keywords = new ArrayList<>();
         if (Gdx.files.internal(filepath).exists()) {
             String json = Gdx.files.internal(filepath).readString(String.valueOf(StandardCharsets.UTF_8));
             keywords.addAll(Arrays.asList(gson.fromJson(json, Keyword[].class)));
+        }
+        for (String packageName : packages) {
+            String languageAndFolder = langKey + "/" + packageName;
+            String questJson = modID + "Resources/localization/" + languageAndFolder + "/Keywordstrings.json";
+            FileHandle handle = Gdx.files.internal(questJson);
+            if (handle.exists()) {
+                logger.info("Loading keywords for quest package " + packageName + "from \"resources/localization/" + languageAndFolder + "\"");
+                questJson = handle.readString(String.valueOf(StandardCharsets.UTF_8));
+                List<Keyword> questKeywords = new ArrayList<>(Arrays.asList(gson.fromJson(questJson, Keyword[].class)));
+                keywords.addAll(questKeywords);
+            }
         }
 
         for (Keyword keyword : keywords) {
@@ -281,6 +305,7 @@ public class Anniv8Mod implements
             }
         }
     }
+
 
     @Override
     public void receiveAddAudio() {

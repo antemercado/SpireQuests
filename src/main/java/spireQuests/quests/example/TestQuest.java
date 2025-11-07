@@ -1,7 +1,8 @@
-package spireQuests.quests;
+package spireQuests.quests.example;
 
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import spireQuests.patches.QuestTriggers;
+import spireQuests.quests.AbstractQuest;
 
 import static spireQuests.Anniv8Mod.makeID;
 

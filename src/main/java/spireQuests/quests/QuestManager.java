@@ -7,6 +7,7 @@ import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import spireQuests.Anniv8Mod;
+import spireQuests.quests.example.TestQuest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
