@@ -82,6 +82,16 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
         author = localization.TEXT[2];
     }
 
+    //override if you want to set up the text differently
+    public String getRequirementsText() {
+        return localization.EXTRA_TEXT[0];
+    }
+
+    //override if you want to set up the text differently
+    public String getRewardsText() {
+        return localization.EXTRA_TEXT[1];
+    }
+
     /**
      * Adds an objective tracker to a quest. Should be used in the constructor. Can also call Tracker.add
      * @param questTracker

@@ -1,0 +1,66 @@
+package spireQuests.ui;
+
+import basemod.BaseMod;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.megacrit.cardcrawl.core.Settings;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.helpers.Hitbox;
+import com.megacrit.cardcrawl.helpers.controller.CInputActionSet;
+import com.megacrit.cardcrawl.helpers.input.InputHelper;
+import spireQuests.quests.AbstractQuest;
+import spireQuests.quests.example.TestQuest;
+import spireQuests.util.TexLoader;
+
+import java.util.ArrayList;
+
+import static spireQuests.Anniv8Mod.makeUIPath;
+
+public class QuestBoardProp {
+    public static final float DRAW_X;
+    public static final float DRAW_Y;
+    public Hitbox hb;
+    public ArrayList<AbstractQuest> quests;
+    protected static final String questBoardPropImagePath = makeUIPath("bulletin_board.png");
+    private final Texture sprite;
+    public int numQuestsPickable;
+
+    public QuestBoardProp() {
+        this.quests = new ArrayList<>();
+        // TODO select 3 random quests
+        this.quests.add(new TestQuest());
+        this.quests.add(new TestQuest());
+        this.quests.add(new TestQuest());
+        numQuestsPickable = 2;
+        this.sprite = TexLoader.getTexture(questBoardPropImagePath);
+        this.hb = new Hitbox(sprite.getWidth() * Settings.xScale, sprite.getHeight() * Settings.yScale);
+        this.hb.move(DRAW_X + ((float) sprite.getWidth() / 2) * Settings.xScale, DRAW_Y + ((float) sprite.getHeight() / 2) * Settings.yScale);
+    }
+
+    public void update() {
+        this.hb.update();
+        if ((this.hb.hovered && InputHelper.justClickedLeft || CInputActionSet.select.isJustPressed()) && !AbstractDungeon.isScreenUp && !AbstractDungeon.isFadingOut && !AbstractDungeon.player.viewingRelics) {
+            QuestBoardScreen.init(this, quests);
+            BaseMod.openCustomScreen(QuestBoardScreen.Enum.QUEST_BOARD);
+            this.hb.hovered = false;
+        }
+    }
+
+    public void render(SpriteBatch sb) {
+        sb.setColor(Color.WHITE);
+        sb.draw(sprite, DRAW_X, DRAW_Y, sprite.getWidth() * Settings.xScale, sprite.getHeight() * Settings.yScale);
+        if (this.hb.hovered) {
+            sb.setBlendFunction(770, 1);
+            sb.setColor(Color.GOLD);
+            sb.draw(sprite, DRAW_X, DRAW_Y, sprite.getWidth() * Settings.xScale, sprite.getHeight() * Settings.yScale);
+            sb.setBlendFunction(770, 771);
+        }
+        this.hb.render(sb);
+    }
+
+    static {
+        DRAW_X = (float)Settings.WIDTH * 0.5F - 300.0F * Settings.xScale;
+        DRAW_Y = AbstractDungeon.floorY + 109.0F * Settings.yScale;
+    }
+}

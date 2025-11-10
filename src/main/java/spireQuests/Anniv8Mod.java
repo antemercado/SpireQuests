@@ -25,6 +25,7 @@ import spireQuests.cardvars.SecondDamage;
 import spireQuests.cardvars.SecondMagicNumber;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
+import spireQuests.ui.QuestBoardScreen;
 import spireQuests.util.TexLoader;
 
 import java.lang.reflect.InvocationTargetException;
@@ -171,6 +172,8 @@ public class Anniv8Mod implements
         addSaveFields();
         initializeConfig();
         initializeSavedData();
+
+        BaseMod.addCustomScreen(new QuestBoardScreen());
     }
 
     public static void addPotions() {
