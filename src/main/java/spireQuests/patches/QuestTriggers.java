@@ -25,6 +25,7 @@ public class QuestTriggers {
     public static final Trigger<AbstractCard> PLAY_CARD = new Trigger<>();
     public static final Trigger<Integer> DAMAGE_TAKEN = new Trigger<>();
     public static final Trigger<Void> TURN_START = new Trigger<>();
+    public static final Trigger<Void> VICTORY = new Trigger<>();
 
     private static boolean disabled() {
         return CardCrawlGame.mode != CardCrawlGame.GameMode.GAMEPLAY;
@@ -142,4 +143,13 @@ public class QuestTriggers {
         }
     }
 
+    @SpirePatch2(clz = AbstractPlayer.class, method = "onVictory")
+    public static class OnVictory {
+        @SpirePrefixPatch
+        public static void victoryPatch() {
+            if (disabled()) return;
+
+            VICTORY.trigger();
+        }
+    }
 }
