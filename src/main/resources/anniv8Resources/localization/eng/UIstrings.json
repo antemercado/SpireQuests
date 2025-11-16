@@ -38,5 +38,11 @@
       "a random Uncommon relic",
       "a random Rare relic"
     ]
+  },
+  "${ModID}:SingleCardReward": {
+    "TEXT": [
+      "[Card] ",
+      "Tip: Right-click for detailed card view!"
+    ]
   }
 }
