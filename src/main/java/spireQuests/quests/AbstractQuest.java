@@ -40,6 +40,7 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
     public String description;
     public String author;
     public float width = 0;
+    public boolean needHoverTip = false;
 
     public boolean useDefaultReward;
     public List<QuestReward> questRewards;
@@ -169,6 +170,14 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
     }
 
     /**
+     * This allows customizing the PowerTip that is shown if needsHoverToolip is true and the quets is hovered in the UI
+     * @return PowerTip that will be displayed on hover
+     */
+    public PowerTip getHoverTooltip() {
+        return new PowerTip(name, getDescription());
+    }
+
+    /**
      * Adds an objective tracker to a quest. Should be used in the constructor. Can also call Tracker.add
      * @param questTracker
      * @return
@@ -236,6 +245,14 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
         trackers.clear();
         triggers.clear();
         trackers.add(new QuestFailedTracker());
+    }
+
+    public boolean isCompleted() {
+        return complete;
+    }
+
+    public boolean isFailed() {
+        return failed;
     }
 
     public final void obtainRewards() {
@@ -393,10 +410,6 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
         }
 
         public final <A> void setTrigger(Trigger<A> trigger, Consumer<A> onTrigger) {
-            if (trigger != null) {
-                throw new RuntimeException("setTrigger should only be set once on a Tracker!");
-            }
-
             this.trigger = trigger.getTriggerMethod((param) -> {
                 if (Tracker.this.condition == null || Tracker.this.condition.get()) onTrigger.accept(param);
             });

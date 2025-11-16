@@ -13,6 +13,7 @@ import com.megacrit.cardcrawl.helpers.input.InputHelper;
 import com.megacrit.cardcrawl.localization.UIStrings;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
+import spireQuests.util.ImageHelper;
 import spireQuests.util.TexLoader;
 
 import java.util.ArrayList;
@@ -157,7 +158,9 @@ public class QuestUI {
                 }
 
                 if (hb.hovered) {
-                    //render quest tip with full description and reward tips
+                    if (quest.needHoverTip && !quest.isCompleted() && !quest.isFailed()) {
+                        ImageHelper.tipBoxAtMousePos(quest.name, quest.getDescription());
+                    }
                 }
             }
 
