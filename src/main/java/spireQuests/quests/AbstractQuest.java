@@ -261,7 +261,9 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
     }
 
     public void onStart() {
-
+        for (Tracker t : trackers) {
+            t.refreshState();
+        }
     }
 
     public void onComplete() {
@@ -467,7 +469,7 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
         }
 
         /**
-         * Called upon loading save, to ensure quest displays an accurate state
+         * Called upon starting quest or loading save, to ensure quest displays an accurate state
          */
         public void refreshState() {
 
