@@ -1,0 +1,13 @@
+{
+  "${ModID}:BackToBasicsQuest": {
+    "TEXT": [
+      "Back To Basics",
+      "Defeat an Elite while only playing basic cards.",
+      "coda"
+    ],
+    "EXTRA_TEXT": [
+      "Defeat an Elite while only playing basic cards.",
+      "Upgrade all Basic cards in your deck."
+    ]
+  }
+}
