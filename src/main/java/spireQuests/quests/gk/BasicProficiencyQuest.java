@@ -1,0 +1,63 @@
+package spireQuests.quests.gk;
+
+import com.badlogic.gdx.graphics.Color;
+import com.megacrit.cardcrawl.cards.blue.Dualcast;
+import com.megacrit.cardcrawl.cards.colorless.Madness;
+import com.megacrit.cardcrawl.cards.green.Survivor;
+import com.megacrit.cardcrawl.cards.purple.Vigilance;
+import com.megacrit.cardcrawl.cards.red.Bash;
+import com.megacrit.cardcrawl.core.CardCrawlGame;
+import com.megacrit.cardcrawl.helpers.CardLibrary;
+import com.megacrit.cardcrawl.helpers.FontHelper;
+import spireQuests.patches.QuestTriggers;
+import spireQuests.quests.AbstractQuest;
+import spireQuests.quests.QuestReward;
+import spireQuests.quests.gk.cards.TripleCast;
+import spireQuests.util.Wiz;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class BasicProficiencyQuest extends AbstractQuest {
+    public static final Color TITLE_PURPLE = new Color(183/255f, 95/255f, 245/255f, 1);
+    private static final Map<String, List<String>> CHAR_MAP = new HashMap<>();
+    static {
+        CHAR_MAP.put("IRONCLAD", Arrays.asList(Bash.ID, ""));
+        CHAR_MAP.put("THE_SILENT", Arrays.asList(Survivor.ID, ""));
+        CHAR_MAP.put("DEFECT", Arrays.asList(Dualcast.ID, TripleCast.ID));
+        CHAR_MAP.put("WATCHER", Arrays.asList(Vigilance.ID, ""));
+        CHAR_MAP.put("THE_PACKMASTER", Arrays.asList("anniv5:Cardistry", ""));
+    }
+    private String cardToPlayId = Madness.ID;
+    private String rewardCardId = Madness.ID;
+
+    public BasicProficiencyQuest() {
+        super(QuestType.SHORT, QuestDifficulty.EASY);
+        needHoverTip = true;
+
+        if(Wiz.p() != null) {
+            List<String> data = CHAR_MAP.get(Wiz.p().chosenClass.name());
+            cardToPlayId = data.get(0);
+            rewardCardId = data.get(1);
+        }
+
+        new TriggerTracker<>(QuestTriggers.PLAY_CARD, 3)
+                .triggerCondition((card) -> card.cardID.equals(cardToPlayId))
+                .setResetTrigger(QuestTriggers.VICTORY)
+                .add(this);
+
+        addReward(new QuestReward.CardReward(CardLibrary.getCopy(rewardCardId)));
+    }
+
+    @Override
+    public boolean canSpawn() {
+        return CHAR_MAP.containsKey(Wiz.p().chosenClass.name()) && Wiz.deck().findCardById(cardToPlayId) != null;
+    }
+
+    @Override
+    public String getDescription() {
+        return String.format(description, FontHelper.colorString(cardToPlayId, "y"));
+    }
+}
