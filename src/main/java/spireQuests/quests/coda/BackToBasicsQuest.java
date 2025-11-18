@@ -1,13 +1,11 @@
 package spireQuests.quests.coda;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.AbstractCard.CardRarity;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
 import com.megacrit.cardcrawl.rooms.MonsterRoomBoss;
-import com.megacrit.cardcrawl.rooms.MonsterRoomElite;
 import com.megacrit.cardcrawl.vfx.cardManip.ShowCardBrieflyEffect;
 
 import spireQuests.patches.QuestTriggers;
@@ -67,25 +65,24 @@ public class BackToBasicsQuest  extends AbstractQuest {
 
     @Override
     public boolean canSpawn() {
-        for(AbstractCard c : AbstractDungeon.player.masterDeck.group) {
-            if (AbstractDungeon.actNum > 1) {
-                return false;
-            }
-            if (c.rarity == CardRarity.BASIC || c.rarity ==  CardRarity.COMMON) {
-                return true;
-            }
+        if (AbstractDungeon.actNum > 1) {
+            return false;
         }
+        
+        int count = (int) AbstractDungeon.player.masterDeck.group.stream()
+                    .filter(c -> c.rarity == CardRarity.BASIC || c.rarity == CardRarity.COMMON)
+                    .count();
+
+        if (count >= 5) {
+            return true;
+        }
+
         return false;
     }
 
     @Override
     public void onComplete() {
         ArrayList<AbstractCard> upgradableCards = new ArrayList<>();
-        for (AbstractCard c : AbstractDungeon.player.masterDeck.group) {
-            if (c.canUpgrade() && (c.rarity == CardRarity.BASIC || c.rarity == CardRarity.COMMON)) {
-                upgradableCards.add(c);
-            }
-        }
         Collections.shuffle(upgradableCards, new Random(AbstractDungeon.miscRng.randomLong()));
 
         if (upgradableCards.size() == 1) {
