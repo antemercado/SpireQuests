@@ -8,7 +8,8 @@
     "Alchyr",
     "Pandemonium",
     "Darkglade",
-    "coda"
+    "coda",
+    "Mangochicken"
   ],
   "description": "${project.description}",
   "version": "${project.version}",

@@ -48,7 +48,7 @@ public class QuestRunHistoryPatch {
                 if (list == null) {
                     return;
                 }
-                questCompletionPerFloorLog.get(AbstractDungeon.player).addAll(list);
+                questPickupPerFloorLog.get(AbstractDungeon.player).addAll(list);
             }
         });
         BaseMod.addSaveField(Anniv8Mod.makeID("QuestCompletionPerFloor"), new CustomSavable<List<List<String>>>() {

@@ -187,6 +187,7 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
 
         if (questTracker.trigger != null) triggers.add(questTracker.trigger);
         if (questTracker.reset != null) triggers.addAll(questTracker.reset);
+        if (questTracker.failTriggers != null) triggers.addAll(questTracker.failTriggers);
 
         return questTracker;
     }
@@ -210,6 +211,7 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
         trackers.clear();
         triggers.clear();
         trackers.add(new QuestCompleteTracker());
+        completeSFX();
         return true;
     }
 
@@ -227,6 +229,7 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
         if (notFailed) return false;
 
         forceFail();
+        failSFX();
         return true;
     }
 
@@ -237,6 +240,16 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
         trackers.clear();
         triggers.clear();
         trackers.add(new QuestFailedTracker());
+    }
+
+    //override if you want different completion SFX.
+    public void completeSFX() {
+        CardCrawlGame.sound.play("UNLOCK_PING");
+    }
+
+    //override if you want different failure SFX.
+    public void failSFX() {
+        CardCrawlGame.sound.play("DEATH_STINGER");
     }
 
     public boolean isCompleted() {
@@ -362,14 +375,16 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
 
     public abstract static class Tracker {
         public String text;
+        protected Supplier<Boolean> isFailed = () -> false;
         protected boolean hidden = false;
         protected Supplier<Boolean> condition = null;
         protected Consumer<Trigger<?>> trigger = null;
         protected ArrayList<Consumer<Trigger<?>>> reset = new ArrayList<>();
+        protected ArrayList<Consumer<Trigger<?>>> failTriggers = new ArrayList<>();
 
         public abstract boolean isComplete();
         public boolean isFailed() {
-            return false;
+            return isFailed.get();
         }
         public boolean isDisabled() {
             return false;
@@ -401,6 +416,29 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
             this.trigger = trigger.getTriggerMethod((param) -> {
                 if (Tracker.this.condition == null || Tracker.this.condition.get()) onTrigger.accept(param);
             });
+        }
+
+        /**
+         * Sets a trigger that will fail (the quest) when the condition is met.
+         * @param trigger
+         */
+        public final <A> Tracker setFailureTrigger(Trigger<A> trigger) {
+            return setFailureTrigger(trigger, (param) -> true);
+        }
+
+        /**
+         * Sets a trigger that will fail (the quest) when the condition is met.
+         * @param trigger
+         * @param condition Receives the trigger parameter and only fails the quest if true is returned.
+         */
+        public final <A> Tracker setFailureTrigger(Trigger<A> trigger, Function<A, Boolean> condition) {
+            this.failTriggers.add(trigger.getTriggerMethod((param) -> {
+                if(this.isComplete()) return;
+                if (condition.apply(param)) {
+                    isFailed = () -> true;
+                }
+            }));
+            return this;
         }
 
         /**
@@ -495,7 +533,6 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
         private final Supplier<T> progress;
         private final T target;
         private final BiFunction<T, T, Boolean> comparer;
-        private final Supplier<Boolean> isFailed;
 
         public PassiveTracker(Supplier<T> getProgress, T target) {
             this(getProgress, target, Object::equals, ()->false);
@@ -542,7 +579,6 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
     public static class TriggerTracker<T> extends Tracker {
         private final int targetCount;
         private Function<T, Boolean> triggerCondition = null;
-        private final Supplier<Boolean> isFailed;
 
         private int count;
 
