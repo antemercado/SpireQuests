@@ -90,6 +90,9 @@ public class BackToBasicsQuest  extends AbstractQuest {
 
         if (upgradableCards.size() == 1) {
             upgradeAndDisplay(upgradableCards.get(0), Settings.WIDTH / 2.0F, Settings.HEIGHT / 2.0F);
+        } else if (upgradableCards.size() == 2) {
+            upgradeAndDisplay(upgradableCards.get(0), Settings.WIDTH / 2.0F - AbstractCard.IMG_WIDTH / 2.0F - 20.0F, Settings.HEIGHT / 2.0F);
+            upgradeAndDisplay(upgradableCards.get(1), Settings.WIDTH / 2.0F + AbstractCard.IMG_WIDTH / 2.0F + 20.0F, Settings.HEIGHT / 2.0F);
         } else {
             for (int i = 0; i < 3; i++) {
                 upgradeAndDisplay(upgradableCards.get(i), Settings.WIDTH / 3.0F + (Settings.WIDTH / 6.0F * i), Settings.HEIGHT / 2.0F);
