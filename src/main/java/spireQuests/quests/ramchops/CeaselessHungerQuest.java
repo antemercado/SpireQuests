@@ -28,13 +28,9 @@ public class CeaselessHungerQuest extends AbstractQuest {
         super(QuestType.LONG, QuestDifficulty.HARD);
 
 
-        new TriggeredUpdateTracker<>(QuestTriggers.ACT_CHANGE, 1, 1, ()->{
-
-            if (!initialPickup && AbstractDungeon.actNum <= 3 && AbstractDungeon.getCurrRoom() != null)  AbstractDungeon.getCurrRoom().spawnRelicAndObtain(Settings.WIDTH/2f, Settings.HEIGHT/2f, new NlothsMask());
-
-            return 1;
-        }).hide().add(this);
-
+        new TriggerEvent<>(QuestTriggers.ACT_CHANGE, (actNum)->{
+            if (!initialPickup && actNum == 2 && AbstractDungeon.getCurrRoom() != null)  AbstractDungeon.getCurrRoom().spawnRelicAndObtain(Settings.WIDTH/2f, Settings.HEIGHT/2f, new NlothsMask());
+        }).add(this);
 
         new TriggeredUpdateTracker<>(QuestTriggers.CHEST_OPENED, 0, 1, ()-> AbstractDungeon.actNum == 3 ? 1 : 0).add(this);
 
@@ -66,10 +62,6 @@ public class CeaselessHungerQuest extends AbstractQuest {
 
         questRewards.clear();
 
-        if (!Settings.hasSapphireKey){
-            AbstractDungeon.topLevelEffects.add(new ObtainKeyEffect(ObtainKeyEffect.KeyColor.BLUE));
-        }
-
         for (AbstractRelic byeByeNloth : relicsToRemove){
 
             AbstractDungeon.player.loseRelic(byeByeNloth.relicId);
@@ -80,9 +72,6 @@ public class CeaselessHungerQuest extends AbstractQuest {
             addReward(new QuestReward.RelicReward(relic));
             addReward(new QuestReward.RelicReward(relic2));
         }
-
-
-        super.onComplete();
     }
 
     @Override

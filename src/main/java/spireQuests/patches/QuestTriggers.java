@@ -30,7 +30,7 @@ public class QuestTriggers {
     public static final Trigger<Void> VICTORY = new Trigger<>();
     public static final Trigger<Void> IMPENDING_DAY_KILL = new Trigger<>();
     public static final Trigger<Integer> ACT_CHANGE = new Trigger<>();
-    public static final Trigger<AbstractChest> CHEST_OPENED = new Trigger<>();
+    public static final Trigger<AbstractChest> CHEST_OPENED = new Trigger<>(); //NOTE: This includes both normal and boss chests.
 
     private static boolean disabled() {
         return CardCrawlGame.mode != CardCrawlGame.GameMode.GAMEPLAY;
