@@ -32,7 +32,7 @@ import spireQuests.patches.QuestRunHistoryPatch;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestGenerator;
 import spireQuests.quests.QuestManager;
-import spireQuests.quests.coda.NuclearJuicePotion;
+import spireQuests.quests.coda.potions.NuclearJuicePotion;
 import spireQuests.rewards.SingleCardReward;
 import spireQuests.ui.FixedModLabeledToggleButton.FixedModLabeledToggleButton;
 import spireQuests.ui.QuestBoardScreen;

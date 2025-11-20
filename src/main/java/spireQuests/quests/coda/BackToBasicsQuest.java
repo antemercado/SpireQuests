@@ -103,6 +103,6 @@ public class BackToBasicsQuest extends AbstractQuest {
     private void upgradeAndDisplay(AbstractCard card, float xPos, float yPos) {
         card.upgrade();
         AbstractDungeon.player.bottledCardUpgradeCheck(card);
-        AbstractDungeon.effectList.add(new ShowCardBrieflyEffect(card.makeStatEquivalentCopy(), xPos, yPos));
+        AbstractDungeon.topLevelEffectsQueue.add(new ShowCardBrieflyEffect(card.makeStatEquivalentCopy(), xPos, yPos));
     }
 }

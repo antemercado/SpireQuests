@@ -1,4 +1,4 @@
-package spireQuests.quests.coda;
+package spireQuests.quests.coda.potions;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;

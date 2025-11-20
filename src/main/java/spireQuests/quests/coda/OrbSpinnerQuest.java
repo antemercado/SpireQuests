@@ -11,6 +11,8 @@ import spireQuests.patches.QuestTriggers;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestReward.PotionReward;
 import spireQuests.quests.QuestReward.RelicReward;
+import spireQuests.quests.coda.potions.NuclearJuicePotion;
+import spireQuests.quests.coda.relics.RadiationDispenserRelic;
 
 public class OrbSpinnerQuest extends AbstractQuest {
 

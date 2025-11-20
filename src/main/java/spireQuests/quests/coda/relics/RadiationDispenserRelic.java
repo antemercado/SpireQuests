@@ -1,4 +1,4 @@
-package spireQuests.quests.coda;
+package spireQuests.quests.coda.relics;
 
 import static spireQuests.Anniv8Mod.makeID;
 
@@ -6,6 +6,7 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.rewards.RewardItem;
 
 import spireQuests.abstracts.AbstractSQRelic;
+import spireQuests.quests.coda.potions.NuclearJuicePotion;
 
 public class RadiationDispenserRelic extends AbstractSQRelic {
 
