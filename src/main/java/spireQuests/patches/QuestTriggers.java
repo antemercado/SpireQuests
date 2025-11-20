@@ -213,6 +213,8 @@ public class QuestTriggers {
             if (__instance.maxOrbs > 0){
                 CHANNEL_ORB.trigger(orbToSet);
             }
+        }
+    }
 
     @SpirePatch2(clz = PotionPopUp.class, method = "updateInput")
     @SpirePatch2(clz = PotionPopUp.class, method = "updateTargetMode")
