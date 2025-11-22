@@ -16,7 +16,7 @@ public class UnbreakableQuest extends AbstractQuest {
     private int damageTaken = 0;
 
     public UnbreakableQuest() {
-        super(QuestType.LONG, QuestDifficulty.HARD);
+        super(QuestType.LONG, QuestDifficulty.NORMAL);
         if (AbstractDungeon.player != null) {
             this.damageGoal = AbstractDungeon.player.startingMaxHP;
         }
