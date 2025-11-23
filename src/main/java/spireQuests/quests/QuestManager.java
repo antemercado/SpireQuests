@@ -147,6 +147,9 @@ public class QuestManager {
         if (quest.fail()) {
             quests().remove(quest);
             quest.onFail();
+
+            List<List<String>> questFailurePerFloor = QuestRunHistoryPatch.questFailurePerFloorLog.get(AbstractDungeon.player);
+            questFailurePerFloor.get(questFailurePerFloor.size() - 1).add(quest.id);
             return;
         }
 
@@ -170,6 +173,9 @@ public class QuestManager {
         quest.forceFail();
         quest.onFail();
         completeQuest(quest);
+
+        List<List<String>> questFailurePerFloor = QuestRunHistoryPatch.questFailurePerFloorLog.get(AbstractDungeon.player);
+        questFailurePerFloor.get(questFailurePerFloor.size() - 1).add(quest.id);
     }
 
     public void update() {

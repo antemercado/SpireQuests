@@ -53,7 +53,8 @@
   "${ModID}:RunHistoryScreen": {
     "TEXT": [
       "Quests:",
-      "Completed:"
+      "Completed:",
+      "Failed:"
     ]
   },
     "${ModID}:QuestboundMod": {
