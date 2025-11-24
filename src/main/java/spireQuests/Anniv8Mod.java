@@ -64,7 +64,8 @@ public class Anniv8Mod implements
         AddAudioSubscriber,
         PostDungeonInitializeSubscriber,
         StartGameSubscriber,
-        PostRenderSubscriber {
+        PostRenderSubscriber,
+        PostDeathSubscriber {
 
     public static final Logger logger = LogManager.getLogger("SpireQuests");
 
@@ -415,6 +416,12 @@ public class Anniv8Mod implements
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    @Override
+    public void receivePostDeath() {
+        QuestManager.failAllQuests();
     }
 
 }
