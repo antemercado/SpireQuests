@@ -31,6 +31,7 @@ import spireQuests.cardvars.SecondMagicNumber;
 import spireQuests.commands.AddQuestCommand;
 import spireQuests.commands.SpawnQuestCommand;
 import spireQuests.patches.QuestRunHistoryPatch;
+import spireQuests.questStats.QuestStats;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestGenerator;
 import spireQuests.quests.QuestManager;
@@ -160,6 +161,7 @@ public class Anniv8Mod implements
         QuestManager.initialize();
         QuestGenerator.initialize();
         QuestRunHistoryPatch.initialize();
+        QuestStats.initialize();
         addPotions();
         addMonsters();
         addSaveFields();
