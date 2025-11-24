@@ -70,6 +70,8 @@ public class QuestStatsScreen implements DropdownMenuListener {
         allQuestList.sort(null);
         allQuestList.add(0, "TEXT[ALL_QUESTS]");
         questDropdown = new DropdownMenu(this, allQuestList, FontHelper.tipBodyFont, Settings.CREAM_COLOR);
+        selectedQuestStats = QuestStats.getAllStats();
+        refreshData();
     }
 
     public void open() {
@@ -128,19 +130,26 @@ public class QuestStatsScreen implements DropdownMenuListener {
                 FontHelper.tipBodyFont.getLineHeight(),
                 Settings.CREAM_COLOR
             );
-            // Stats
-            FontHelper.renderFont(sb, FontHelper.tipBodyFont, 
-                String.format("%s: %d", "TEXT[SEEN]", timesSeen), LEFT_X_ANCHOR, QUEST_SEEN_Y, Settings.CREAM_COLOR);
-            FontHelper.renderFont(sb, FontHelper.tipBodyFont, 
-                String.format("%s: %d/%d (%.2f%%)", "TEXT[TAKEN]", timesTaken, timesSeen, ((timesTaken * 100.0f)/timesSeen)), 
-                LEFT_X_ANCHOR, QUEST_TAKEN_Y, Settings.CREAM_COLOR);
-            FontHelper.renderFont(sb, FontHelper.tipBodyFont, 
-                String.format("%s: %d/%d (%.2f%%)", "TEXT[COMPLETE]", timesCompleted, timesTaken, ((timesCompleted * 100.0f)/timesTaken)), 
-                LEFT_X_ANCHOR, QUEST_COMPLETE_Y, Settings.CREAM_COLOR);
-            FontHelper.renderFont(sb, FontHelper.tipBodyFont, 
-                String.format("%s: %d/%d (%.2f%%)", "TEXT[FAILED]", timesFailed, timesTaken, ((timesFailed * 100.0f)/timesTaken)), 
-                LEFT_X_ANCHOR, QUEST_FAILED_Y, Settings.CREAM_COLOR);
         }
+        // Stats
+        FontHelper.renderFont(sb, FontHelper.tipBodyFont, 
+            String.format("%s: %d", "TEXT[SEEN]", timesSeen), LEFT_X_ANCHOR, QUEST_SEEN_Y, Settings.CREAM_COLOR);
+        FontHelper.renderFont(sb, FontHelper.tipBodyFont, 
+            String.format("%s: %d/%d (%.2f%%)", "TEXT[TAKEN]", timesTaken, timesSeen, getPercent(timesTaken, timesSeen)), 
+            LEFT_X_ANCHOR, QUEST_TAKEN_Y, Settings.CREAM_COLOR);
+        FontHelper.renderFont(sb, FontHelper.tipBodyFont, 
+            String.format("%s: %d/%d (%.2f%%)", "TEXT[COMPLETE]", timesCompleted, timesTaken, getPercent(timesCompleted, timesTaken)), 
+            LEFT_X_ANCHOR, QUEST_COMPLETE_Y, Settings.CREAM_COLOR);
+        FontHelper.renderFont(sb, FontHelper.tipBodyFont, 
+            String.format("%s: %d/%d (%.2f%%)", "TEXT[FAILED]", timesFailed, timesTaken, getPercent(timesFailed, timesTaken)), 
+            LEFT_X_ANCHOR, QUEST_FAILED_Y, Settings.CREAM_COLOR);
+    }
+
+    private float getPercent(int num, int den) {
+        if (den == 0) {
+            return 0.0f;
+        }
+        return (num * 100.0f)/den;
     }
 
     private void renderTrophy(SpriteBatch sb) {
