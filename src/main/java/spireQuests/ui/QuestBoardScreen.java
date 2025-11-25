@@ -13,6 +13,7 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 
 import spireQuests.questStats.QuestStats;
+import spireQuests.questStats.QuestStats.QuestStatManager;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
 import spireQuests.util.TexLoader;
@@ -123,7 +124,7 @@ public class QuestBoardScreen extends CustomScreen {
         for (AbstractQuest quest : quests) {
             QuestBoardQuest questBoardQuest = new QuestBoardQuest(quest, x, y);
             questBoardQuests.add(questBoardQuest);
-            QuestStats.increaseSeen(quest.id);
+            QuestStatManager.markSeen(quest.id);
             x += xIncrease;
         }
     }
