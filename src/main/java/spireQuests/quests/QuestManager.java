@@ -17,6 +17,7 @@ import spireQuests.Anniv8Mod;
 import spireQuests.cardmods.QuestboundMod;
 import spireQuests.patches.QuestRunHistoryPatch;
 import spireQuests.questStats.QuestStats;
+import spireQuests.questStats.QuestStats.QuestStatManager;
 import spireQuests.vfx.ShowCardandFakeObtainEffect;
 
 import java.util.*;
@@ -131,7 +132,7 @@ public class QuestManager {
                 AbstractDungeon.effectList.add(new ShowCardandFakeObtainEffect(c.makeCopy(), (float) (Settings.WIDTH / 2), (float) (Settings.HEIGHT / 2)));
             });
         }
-        QuestStats.increaseTaken(quest.id);
+        QuestStatManager.markTaken(quest.id);
         List<List<String>> questPickupPerFloor = QuestRunHistoryPatch.questPickupPerFloorLog.get(AbstractDungeon.player);
         if (!questPickupPerFloor.isEmpty()) {
             questPickupPerFloor.get(questPickupPerFloor.size() - 1).add(quest.id);
@@ -150,7 +151,7 @@ public class QuestManager {
             quests().remove(quest);
             quest.onFail();
 
-            QuestStats.increaseFailed(quest.id);
+            QuestStatManager.markFailed(quest.id);
             List<List<String>> questFailurePerFloor = QuestRunHistoryPatch.questFailurePerFloorLog.get(AbstractDungeon.player);
             questFailurePerFloor.get(questFailurePerFloor.size() - 1).add(quest.id);
             return;
@@ -168,7 +169,7 @@ public class QuestManager {
 
         quests().remove(quest);
         quest.obtainRewards();
-        QuestStats.increaseComplete(quest.id);
+        QuestStatManager.markComplete(quest.id);
         List<List<String>> questCompletionPerFloor = QuestRunHistoryPatch.questCompletionPerFloorLog.get(AbstractDungeon.player);
         questCompletionPerFloor.get(questCompletionPerFloor.size() - 1).add(quest.id);
     }
@@ -178,7 +179,7 @@ public class QuestManager {
         quest.onFail();
         completeQuest(quest);
 
-        QuestStats.increaseFailed(quest.id);
+        QuestStatManager.markFailed(quest.id);
         List<List<String>> questFailurePerFloor = QuestRunHistoryPatch.questFailurePerFloorLog.get(AbstractDungeon.player);
         questFailurePerFloor.get(questFailurePerFloor.size() - 1).add(quest.id);
     }
@@ -200,9 +201,8 @@ public class QuestManager {
         //quest ui
     }
 
-    public static void failAllQuests() {
-        List<AbstractQuest> questsToFail = quests();
-        for (AbstractQuest q : questsToFail) {
+    public static void failAllActiveQuests() {
+        for (AbstractQuest q : quests()) {
             q.forceFail();
         }
     }

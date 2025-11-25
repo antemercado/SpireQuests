@@ -162,7 +162,7 @@ public class Anniv8Mod implements
         QuestManager.initialize();
         QuestGenerator.initialize();
         QuestRunHistoryPatch.initialize();
-        QuestStats.initialize();
+        QuestStats.QuestStatManager.initialize();
         addPotions();
         addMonsters();
         addSaveFields();
@@ -418,7 +418,7 @@ public class Anniv8Mod implements
 
     @Override
     public void receivePostDeath() {
-        QuestManager.failAllQuests();
+        QuestManager.failAllActiveQuests();
     }
 
 }
