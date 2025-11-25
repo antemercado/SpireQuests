@@ -16,8 +16,7 @@ import com.megacrit.cardcrawl.vfx.ThoughtBubble;
 import spireQuests.Anniv8Mod;
 import spireQuests.cardmods.QuestboundMod;
 import spireQuests.patches.QuestRunHistoryPatch;
-import spireQuests.questStats.QuestStats;
-import spireQuests.questStats.QuestStats.QuestStatManager;
+import spireQuests.questStats.QuestStatManager;
 import spireQuests.vfx.ShowCardandFakeObtainEffect;
 
 import java.util.*;
