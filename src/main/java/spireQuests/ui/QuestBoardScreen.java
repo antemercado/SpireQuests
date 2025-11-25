@@ -12,8 +12,7 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 
-import spireQuests.questStats.QuestStats;
-import spireQuests.questStats.QuestStats.QuestStatManager;
+import spireQuests.questStats.QuestStatManager;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
 import spireQuests.util.TexLoader;
