@@ -1,6 +1,7 @@
 package spireQuests.questStats;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.evacipated.cardcrawl.modthespire.lib.SpireEnum;
@@ -19,6 +20,9 @@ import spireQuests.Anniv8Mod;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
 import spireQuests.quests.QuestReward;
+import spireQuests.util.TexLoader;
+
+import static spireQuests.Anniv8Mod.makeUIPath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,23 +43,26 @@ public class QuestStatsScreen implements DropdownMenuListener {
 
     private static final Logger logger = LogManager.getLogger(QuestStatsScreen.class.getName());
 
-    private static final float LEFT_X_ANCHOR = 490.0F * Settings.xScale;
+    private static final float X_ANCHOR = 440.0F * Settings.xScale;
+    private static final float Y_ANCHOR = (1080.0F - 195.0F) * Settings.yScale; // 825
+    
+    private static final float LEFT_ALIGN = X_ANCHOR + (25.0F * Settings.xScale);
+    private static final float DROPDOWN_Y = Y_ANCHOR - (75.0F * Settings.yScale);
 
-    private static final float DROPDOWN_Y = 780.0F * Settings.yScale;
+    private static final float QUEST_NAME_Y = Y_ANCHOR - (130.0F * Settings.yScale);
+    private static final float QUEST_AUTHOR_Y = Y_ANCHOR - (170.0F * Settings.yScale);
+    private static final float QUEST_DESCRIPTION_Y = Y_ANCHOR - (205.0F * Settings.yScale);
+    private static final float QUEST_DESCRIPTION_LENGTH = 750.0F * Settings.xScale;
 
-    private static final float QUEST_NAME_Y = 715.0F * Settings.yScale;
-    private static final float QUEST_AUTHOR_Y = 675.0F * Settings.yScale;
-    private static final float QUEST_DESCRIPTION_Y = 650.0F * Settings.yScale;
-    private static final float QUEST_DESCRIPTION_LENGTH = 700.0F * Settings.xScale;
+    private static final float QUEST_STAT_Y = Y_ANCHOR - (525.0F * Settings.yScale);
 
-    private static final float QUEST_SEEN_Y = 425.0F * Settings.yScale;
-    private static final float QUEST_TAKEN_Y = 375.0F * Settings.yScale;
-    private static final float QUEST_COMPLETE_Y = 325.0F * Settings.yScale;
-    private static final float QUEST_FAILED_Y = 275.0F * Settings.yScale;
+    private static final float REWARD_X = LEFT_ALIGN + (35.0F * Settings.xScale);
+    private static final float REWARD_OFFSET = 150.0F * Settings.xScale;
+    private static final float REWARD_Y = Y_ANCHOR - (375.0F * Settings.yScale);
 
-    private static final float REWARD_X = 500.0F * Settings.xScale;
-    private static final float REWARD_OFFSET = 105.0F * Settings.xScale;
-    private static final float REWARD_Y = 480.0F * Settings.yScale;
+    private static final Texture BG = TexLoader.getTexture(makeUIPath("stats/background.png"));
+    private static final float BG_X = X_ANCHOR;
+    private static final float BG_Y = 225.0F * Settings.yScale;
 
     private MenuCancelButton cancelButton = new MenuCancelButton();
     private DropdownMenu questDropdown;
@@ -71,8 +78,11 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private int timesTaken = 0;
     private int timesCompleted = 0;
     private int timesFailed = 0;
+    private float descriptionHeight = 0.0f;
 
     private ArrayList<StatRewardBox> rewardBoxes = new ArrayList<>();
+
+    private StringBuilder strbuild = new StringBuilder();
     
     public QuestStatsScreen() {
         allQuests = QuestManager.getAllQuests();
@@ -118,48 +128,56 @@ public class QuestStatsScreen implements DropdownMenuListener {
 
     public void render(SpriteBatch sb) {
         sb.setColor(Color.WHITE);
+        sb.draw(BG, BG_X, BG_Y);
         renderStats(sb);
         renderTrophy(sb);
         renderRewards(sb);
-        questDropdown.render(sb, LEFT_X_ANCHOR, DROPDOWN_Y);
+        questDropdown.render(sb, LEFT_ALIGN, DROPDOWN_Y);
         cancelButton.render(sb);
     }
 
     private void renderStats(SpriteBatch sb) {
+        String nameText;
         // Name
         if (selectedQuest == null) {
-            FontHelper.renderFont(sb, FontHelper.tipHeaderFont, "TEXT[ALL_QUESTS]", LEFT_X_ANCHOR, QUEST_NAME_Y, Settings.CREAM_COLOR);
+            nameText = "TEXT[ALL_QUESTS]";
         } else {
-            FontHelper.renderFont(sb, FontHelper.tipHeaderFont, selectedQuest.name, LEFT_X_ANCHOR, QUEST_NAME_Y, Settings.CREAM_COLOR);
+            nameText = selectedQuest.name;
         }
+        FontHelper.renderFont(sb, FontHelper.losePowerFont, nameText, LEFT_ALIGN, QUEST_NAME_Y, Settings.CREAM_COLOR);
 
         // Quest Info
         if (selectedQuest == null) {
             // General Quest Info
         } else {
             // Author
-            FontHelper.renderFont(sb, FontHelper.tipBodyFont, selectedQuest.author, LEFT_X_ANCHOR, QUEST_AUTHOR_Y, Settings.CREAM_COLOR);
+            FontHelper.renderFont(sb, FontHelper.tipBodyFont, selectedQuest.author, 
+                LEFT_ALIGN + (10.0F * Settings.xScale),
+                QUEST_AUTHOR_Y, Settings.CREAM_COLOR
+            );
             // Description
             FontHelper.renderSmartText(
-                sb, FontHelper.tipBodyFont, 
+                sb, FontHelper.cardDescFont_N, 
                 selectedQuest.description, 
-                LEFT_X_ANCHOR, QUEST_DESCRIPTION_Y, QUEST_DESCRIPTION_LENGTH,
-                FontHelper.tipBodyFont.getLineHeight(),
+                LEFT_ALIGN, QUEST_DESCRIPTION_Y, QUEST_DESCRIPTION_LENGTH,
+                FontHelper.cardDescFont_N.getLineHeight(),
                 Settings.CREAM_COLOR
             );
+            
         }
         // Stats
-        FontHelper.renderFont(sb, FontHelper.tipBodyFont, 
-            String.format("%s: %d", "TEXT[SEEN]", timesSeen), LEFT_X_ANCHOR, QUEST_SEEN_Y, Settings.CREAM_COLOR);
-        FontHelper.renderFont(sb, FontHelper.tipBodyFont, 
-            String.format("%s: %d/%d (%.2f%%)", "TEXT[TAKEN]", timesTaken, timesSeen, getPercent(timesTaken, timesSeen)), 
-            LEFT_X_ANCHOR, QUEST_TAKEN_Y, Settings.CREAM_COLOR);
-        FontHelper.renderFont(sb, FontHelper.tipBodyFont, 
-            String.format("%s: %d/%d (%.2f%%)", "TEXT[COMPLETE]", timesCompleted, timesTaken, getPercent(timesCompleted, timesTaken)), 
-            LEFT_X_ANCHOR, QUEST_COMPLETE_Y, Settings.CREAM_COLOR);
-        FontHelper.renderFont(sb, FontHelper.tipBodyFont, 
-            String.format("%s: %d/%d (%.2f%%)", "TEXT[FAILED]", timesFailed, timesTaken, getPercent(timesFailed, timesTaken)), 
-            LEFT_X_ANCHOR, QUEST_FAILED_Y, Settings.CREAM_COLOR);
+        strbuild.setLength(0);
+        strbuild.append(String.format("%s: %d NL ", "TEXT[SEEN]", timesSeen));
+        strbuild.append(String.format("%s: %d/%d (%.2f%%) NL ", "TEXT[TAKEN]", timesTaken, timesSeen, getPercent(timesTaken, timesSeen)));
+        strbuild.append(String.format("%s: %d/%d (%.2f%%) NL ", "TEXT[COMPLETE]", timesCompleted, timesTaken, getPercent(timesCompleted, timesTaken)));
+        strbuild.append(String.format("%s: %d/%d (%.2f%%) NL ", "TEXT[FAILED]", timesFailed, timesTaken, getPercent(timesFailed, timesTaken)));
+
+        FontHelper.renderSmartText(
+            sb, FontHelper.tipBodyFont, strbuild.toString(), 
+            LEFT_ALIGN, QUEST_STAT_Y, QUEST_DESCRIPTION_LENGTH,
+            FontHelper.tipBodyFont.getLineHeight(),
+            Settings.CREAM_COLOR
+        );
     }
 
     private float getPercent(int num, int den) {
@@ -177,9 +195,6 @@ public class QuestStatsScreen implements DropdownMenuListener {
         if (selectedQuest == null) {
             return;
         }
-        // if (this.timesSeen <= 0) {
-        //     return;
-        // }
         for (StatRewardBox box : rewardBoxes) {
             box.render(sb);
         }
@@ -209,12 +224,25 @@ public class QuestStatsScreen implements DropdownMenuListener {
         if (selectedQuest == null) {
             return;
         }
+
+        this.descriptionHeight = FontHelper.getSmartHeight(FontHelper.cardDescFont_N, selectedQuest.description,
+                QUEST_DESCRIPTION_LENGTH, FontHelper.cardDescFont_N.getLineHeight()
+            );
+        this.descriptionHeight -= FontHelper.cardDescFont_N.getLineHeight();
+
+        float yLine = ((QUEST_DESCRIPTION_Y + this.descriptionHeight) - (QUEST_STAT_Y + FontHelper.tipBodyFont.getLineHeight())) / 2.0F;
+        yLine = (QUEST_DESCRIPTION_Y + this.descriptionHeight) - (StatRewardBox.FRAME_Y / 2.0F) - yLine;
+
+        if (yLine > REWARD_Y) {
+            yLine = REWARD_Y;
+        }
+
         float offset = 0.0f;
         if (selectedQuest.useDefaultReward) { // I thought this var was for if you had custom rewards or used addRewards. I was incorrect.
-            rewardBoxes.add(new StatRewardBox(selectedQuest, REWARD_X, REWARD_Y));
+            rewardBoxes.add(new StatRewardBox(selectedQuest, REWARD_X, yLine));
         } else {
             for (QuestReward r : selectedQuest.questRewards) {
-                rewardBoxes.add(new StatRewardBox(r, REWARD_X + offset, REWARD_Y));
+                rewardBoxes.add(new StatRewardBox(r, REWARD_X + offset, yLine));
                 offset += REWARD_OFFSET;
             }
         }

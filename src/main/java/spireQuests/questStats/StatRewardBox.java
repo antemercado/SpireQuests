@@ -14,6 +14,7 @@ import com.megacrit.cardcrawl.helpers.input.InputHelper;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 
+import basemod.IUIElement;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestReward;
 import spireQuests.quests.QuestReward.CardReward;
@@ -24,7 +25,7 @@ import spireQuests.quests.QuestReward.RelicReward;
 import spireQuests.util.ImageHelper;
 import spireQuests.util.TexLoader;
 
-public class StatRewardBox {
+public class StatRewardBox implements IUIElement {
     private static final Texture CUSTOM_REWARD_IMG = ImageMaster.loadImage("images/ui/run_mods/shiny.png");
     private static final Texture FRAME = TexLoader.getTexture(makeUIPath("stats/reward_frame.png"));
     private static final Texture FRAME_HOVER = TexLoader.getTexture(makeUIPath("stats/reward_frame_hover.png"));
@@ -119,5 +120,15 @@ public class StatRewardBox {
                 CardCrawlGame.relicPopup.open(relic);
             }
         }
+    }
+
+    @Override
+    public int renderLayer() {
+        return 1;
+    }
+
+    @Override
+    public int updateOrder() {
+        return 1;
     }
 }
