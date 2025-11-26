@@ -1,10 +1,14 @@
 package spireQuests.questStats;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.evacipated.cardcrawl.modthespire.lib.SpireEnum;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.FontHelper;
+import com.megacrit.cardcrawl.helpers.Hitbox;
+import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 import com.megacrit.cardcrawl.screens.mainMenu.MainMenuScreen;
 import com.megacrit.cardcrawl.screens.mainMenu.MenuCancelButton;
@@ -14,10 +18,12 @@ import com.megacrit.cardcrawl.screens.options.DropdownMenuListener;
 import spireQuests.Anniv8Mod;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
+import spireQuests.quests.QuestReward;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -47,6 +53,10 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private static final float QUEST_COMPLETE_Y = 325.0F * Settings.yScale;
     private static final float QUEST_FAILED_Y = 275.0F * Settings.yScale;
 
+    private static final float REWARD_X = 500.0F * Settings.xScale;
+    private static final float REWARD_OFFSET = 105.0F * Settings.xScale;
+    private static final float REWARD_Y = 480.0F * Settings.yScale;
+
     private MenuCancelButton cancelButton = new MenuCancelButton();
     private DropdownMenu questDropdown;
 
@@ -61,6 +71,8 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private int timesTaken = 0;
     private int timesCompleted = 0;
     private int timesFailed = 0;
+
+    private ArrayList<StatRewardBox> rewardBoxes = new ArrayList<>();
     
     public QuestStatsScreen() {
         allQuests = QuestManager.getAllQuests();
@@ -86,6 +98,9 @@ public class QuestStatsScreen implements DropdownMenuListener {
         } else {
             updateButtons();
             questDropdown.update();
+            for (StatRewardBox box : rewardBoxes) {
+                box.update();
+            }
         }
     }
 
@@ -102,8 +117,10 @@ public class QuestStatsScreen implements DropdownMenuListener {
     }
 
     public void render(SpriteBatch sb) {
+        sb.setColor(Color.WHITE);
         renderStats(sb);
         renderTrophy(sb);
+        renderRewards(sb);
         questDropdown.render(sb, LEFT_X_ANCHOR, DROPDOWN_Y);
         cancelButton.render(sb);
     }
@@ -156,6 +173,18 @@ public class QuestStatsScreen implements DropdownMenuListener {
 
     }
 
+    private void renderRewards(SpriteBatch sb) {
+        if (selectedQuest == null) {
+            return;
+        }
+        // if (this.timesSeen <= 0) {
+        //     return;
+        // }
+        for (StatRewardBox box : rewardBoxes) {
+            box.render(sb);
+        }
+    }
+
     @Override
     public void changedSelectionTo(DropdownMenu dropdownMenu, int i, String s) {
         logger.warn("Changed dropdown detected");
@@ -175,5 +204,21 @@ public class QuestStatsScreen implements DropdownMenuListener {
         timesTaken = selectedQuestStats.timesTaken;
         timesCompleted = selectedQuestStats.timesComplete;
         timesFailed = selectedQuestStats.timesFailed;
+
+        rewardBoxes.clear();
+        if (selectedQuest == null) {
+            return;
+        }
+        float offset = 0.0f;
+        if (selectedQuest.useDefaultReward) { // I thought this var was for if you had custom rewards or used addRewards. I was incorrect.
+            rewardBoxes.add(new StatRewardBox(selectedQuest, REWARD_X, REWARD_Y));
+        } else {
+            for (QuestReward r : selectedQuest.questRewards) {
+                rewardBoxes.add(new StatRewardBox(r, REWARD_X + offset, REWARD_Y));
+                offset += REWARD_OFFSET;
+            }
+        }
+        Collections.reverse(rewardBoxes);
     }
+
 }
