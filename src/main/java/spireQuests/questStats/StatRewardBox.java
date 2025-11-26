@@ -26,13 +26,15 @@ import spireQuests.util.TexLoader;
 
 public class StatRewardBox {
     private static final Texture CUSTOM_REWARD_IMG = ImageMaster.loadImage("images/ui/run_mods/shiny.png");
-    private static final Texture BOX_OUTLINE = TexLoader.getTexture(makeUIPath("stats/reward_frame.png"));
+    private static final Texture FRAME = TexLoader.getTexture(makeUIPath("stats/reward_frame.png"));
+    private static final Texture FRAME_HOVER = TexLoader.getTexture(makeUIPath("stats/reward_frame_hover.png"));
     private static final Texture CARD_TEX = TexLoader.getTexture(makeUIPath("stats/card.png"));
     private static final Texture POTION_TEX = TexLoader.getTexture(makeUIPath("stats/potion.png"));
     private static final Texture RANDOM_RELIC_TEX = TexLoader.getTexture(makeUIPath("stats/relic.png"));
     private static final Texture GOLD_TEX = TexLoader.getTexture(makeUIPath("stats/gold.png"));
 
-    private static final float BOX_SIDE = 125.0F;
+    public static final float FRAME_X = 125.0F * Settings.xScale;
+    public static final float FRAME_Y = 125.0F * Settings.yScale;
     public static float HEIGHT = 100.0F * Settings.yScale;
     public static float WIDTH = 100.0F * Settings.xScale;
     public Hitbox hb;
@@ -86,12 +88,17 @@ public class StatRewardBox {
     public StatRewardBox(float xPos, float yPos) {
         this.xPos = xPos;
         this.yPos = yPos;
-        this.hb = new Hitbox(xPos, yPos, WIDTH, HEIGHT);
+        this.hb = new Hitbox(xPos, yPos, FRAME_X, FRAME_Y);
     }
 
     public void render(SpriteBatch sb) {
-        sb.draw(BOX_OUTLINE, xPos, yPos, BOX_SIDE, BOX_SIDE);
-        sb.draw(this.img, xPos, yPos, WIDTH, HEIGHT);
+        if (this.hb.hovered) {
+            sb.draw(FRAME_HOVER, xPos, yPos, FRAME_X, FRAME_Y);            
+        } else {
+            sb.draw(FRAME, xPos, yPos, FRAME_X, FRAME_Y);
+        }
+
+        sb.draw(this.img, xPos + (FRAME_X - WIDTH) / 2, yPos + (FRAME_Y - HEIGHT) / 2, WIDTH, HEIGHT);
         if (this.hb.hovered) {
             if (card != null) {
                 card.current_x = InputHelper.mX + (AbstractCard.RAW_W * card.drawScale) * Settings.scale;
@@ -105,8 +112,12 @@ public class StatRewardBox {
 
     public void update() {
         this.hb.update();
-        if (card != null && this.hb.hovered && InputHelper.justClickedRight) {
-            CardCrawlGame.cardPopup.open(card);
+        if (this.hb.hovered && InputHelper.justClickedRight) {
+            if (card != null) {
+                CardCrawlGame.cardPopup.open(card);
+            } else if (relic != null) {
+                CardCrawlGame.relicPopup.open(relic);
+            }
         }
     }
 }
