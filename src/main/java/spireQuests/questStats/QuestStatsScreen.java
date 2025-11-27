@@ -5,17 +5,22 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.evacipated.cardcrawl.modthespire.lib.SpireEnum;
+import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.characters.AbstractPlayer.PlayerClass;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.helpers.Hitbox;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
+import com.megacrit.cardcrawl.screens.charSelect.CharacterOption;
 import com.megacrit.cardcrawl.screens.mainMenu.MainMenuScreen;
 import com.megacrit.cardcrawl.screens.mainMenu.MenuCancelButton;
 import com.megacrit.cardcrawl.screens.options.DropdownMenu;
 import com.megacrit.cardcrawl.screens.options.DropdownMenuListener;
 
+import basemod.BaseMod;
+import basemod.ReflectionHacks;
 import spireQuests.Anniv8Mod;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
@@ -36,6 +41,7 @@ import org.apache.logging.log4j.Logger;
 
 public class QuestStatsScreen implements DropdownMenuListener {
     
+
     public static class Enum {
         @SpireEnum
         public static MainMenuScreen.CurScreen QUEST_STATS_SCREEN;
@@ -44,7 +50,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private static final Logger logger = LogManager.getLogger(QuestStatsScreen.class.getName());
 
     private static final float X_ANCHOR = 440.0F * Settings.xScale;
-    private static final float Y_ANCHOR = (1080.0F - 195.0F) * Settings.yScale; // 825
+    private static final float Y_ANCHOR = (1080.0F - 195.0F) * Settings.yScale; // 885
     
     private static final float LEFT_ALIGN = X_ANCHOR + (25.0F * Settings.xScale);
     private static final float DROPDOWN_Y = Y_ANCHOR - (75.0F * Settings.yScale);
@@ -52,7 +58,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private static final float QUEST_NAME_Y = Y_ANCHOR - (130.0F * Settings.yScale);
     private static final float QUEST_AUTHOR_Y = Y_ANCHOR - (170.0F * Settings.yScale);
     private static final float QUEST_DESCRIPTION_Y = Y_ANCHOR - (205.0F * Settings.yScale);
-    private static final float QUEST_DESCRIPTION_LENGTH = 750.0F * Settings.xScale;
+    private static final float QUEST_DESCRIPTION_LENGTH = 650.0F * Settings.xScale;
 
     private static final float QUEST_STAT_Y = Y_ANCHOR - (525.0F * Settings.yScale);
 
@@ -60,9 +66,24 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private static final float REWARD_OFFSET = 150.0F * Settings.xScale;
     private static final float REWARD_Y = Y_ANCHOR - (375.0F * Settings.yScale);
 
-    private static final Texture BG = TexLoader.getTexture(makeUIPath("stats/background.png"));
     private static final float BG_X = X_ANCHOR;
     private static final float BG_Y = 225.0F * Settings.yScale;
+
+    private static final float BANNER_TOP_Y = Y_ANCHOR - (345.0F * Settings.yScale);
+    private static final float BANNER_X = X_ANCHOR + (660.0F * Settings.yScale);
+
+    private static final float BADGE_X = X_ANCHOR + (713.0F * Settings.yScale);
+    private static final float BADGE_Y = Y_ANCHOR - (445.0F * Settings.yScale);
+    private static final float BADGE_WIDTH = 100.0F * Settings.xScale;
+    private static final float BADGE_HEIGHT = 100.0F * Settings.yScale;
+    private static final int BADGES_PER_ROW = 3;
+
+
+    private static final Texture BG = TexLoader.getTexture(makeUIPath("stats/background.png"));
+    private static final Texture BANNER_TOP = TexLoader.getTexture(makeUIPath("stats/banner_top.png"));
+    private static final Texture BANNER_BOT = TexLoader.getTexture(makeUIPath("stats/banner_bottom.png"));
+    private static final Texture BANNER_EXTRA = TexLoader.getTexture(makeUIPath("stats/banner_middle.png"));
+
 
     private MenuCancelButton cancelButton = new MenuCancelButton();
     private DropdownMenu questDropdown;
@@ -73,16 +94,20 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private AbstractQuest selectedQuest;
     private QuestStats selectedQuestStats;
     private Map<String, String> nameIDMap;
-
+    
     private int timesSeen = 0;
     private int timesTaken = 0;
     private int timesCompleted = 0;
     private int timesFailed = 0;
     private float descriptionHeight = 0.0f;
-
+    
     private ArrayList<StatRewardBox> rewardBoxes = new ArrayList<>();
+    private ArrayList<Texture> badgesToDraw = new ArrayList<>();
 
     private StringBuilder strbuild = new StringBuilder();
+
+    private int extraRows;
+
     
     public QuestStatsScreen() {
         allQuests = QuestManager.getAllQuests();
@@ -100,6 +125,9 @@ public class QuestStatsScreen implements DropdownMenuListener {
         CardCrawlGame.mainMenuScreen.screen = Enum.QUEST_STATS_SCREEN;
         CardCrawlGame.mainMenuScreen.darken();
         cancelButton.show("TEXT[CANCEL]");
+        this.selectedQuest = null;
+        questDropdown = new DropdownMenu(this, allQuestList, FontHelper.tipBodyFont, Settings.CREAM_COLOR);
+        refreshData();
     }
 
     public void update() {
@@ -128,12 +156,48 @@ public class QuestStatsScreen implements DropdownMenuListener {
 
     public void render(SpriteBatch sb) {
         sb.setColor(Color.WHITE);
-        sb.draw(BG, BG_X, BG_Y);
-        renderStats(sb);
+        renderBG(sb);
         renderTrophy(sb);
+        renderStats(sb);
         renderRewards(sb);
         questDropdown.render(sb, LEFT_ALIGN, DROPDOWN_Y);
         cancelButton.render(sb);
+    }
+
+    private void renderBG(SpriteBatch sb) {
+        sb.draw(BG, BG_X, BG_Y);
+        sb.draw(BANNER_TOP, BANNER_X, BANNER_TOP_Y);
+
+        float midDraw = BANNER_TOP_Y;
+        for (int i = 0; i < extraRows; i++) {
+            midDraw -= (i + 1) * BANNER_EXTRA.getHeight() * Settings.yScale;
+            sb.draw(BANNER_EXTRA, BANNER_X, midDraw);
+        }
+
+        float botDraw = midDraw - BANNER_BOT.getHeight() * Settings.yScale;
+        sb.draw(BANNER_BOT, BANNER_X, botDraw);
+    }
+
+    private void renderTrophy(SpriteBatch sb) {
+
+        for (int i = 0; i < badgesToDraw.size(); i++) {
+            Texture t = badgesToDraw.get(i);
+
+            int row = i / BADGES_PER_ROW;
+            int col = i % BADGES_PER_ROW;
+
+            int itemsInRow = Math.min(
+                BADGES_PER_ROW, badgesToDraw.size() - (row * BADGES_PER_ROW)
+            );
+
+            float rowWidth = itemsInRow * BADGE_WIDTH;
+            float xStart = BADGE_X + ((BADGES_PER_ROW * BADGE_WIDTH) - rowWidth) / 2.0F;
+
+            float xDraw = xStart + (col * BADGE_WIDTH);
+            float yDraw = BADGE_Y - row * (BADGE_HEIGHT * Settings.yScale);
+
+            sb.draw(new TextureRegion(t), xDraw, yDraw, BADGE_WIDTH, BADGE_HEIGHT);
+        }
     }
 
     private void renderStats(SpriteBatch sb) {
@@ -152,8 +216,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
         } else {
             // Author
             FontHelper.renderFont(sb, FontHelper.tipBodyFont, selectedQuest.author, 
-                LEFT_ALIGN + (10.0F * Settings.xScale),
-                QUEST_AUTHOR_Y, Settings.CREAM_COLOR
+                LEFT_ALIGN, QUEST_AUTHOR_Y, Settings.CREAM_COLOR
             );
             // Description
             FontHelper.renderSmartText(
@@ -173,9 +236,9 @@ public class QuestStatsScreen implements DropdownMenuListener {
         strbuild.append(String.format("%s: %d/%d (%.2f%%) NL ", "TEXT[FAILED]", timesFailed, timesTaken, getPercent(timesFailed, timesTaken)));
 
         FontHelper.renderSmartText(
-            sb, FontHelper.tipBodyFont, strbuild.toString(), 
+            sb, FontHelper.cardDescFont_N, strbuild.toString(), 
             LEFT_ALIGN, QUEST_STAT_Y, QUEST_DESCRIPTION_LENGTH,
-            FontHelper.tipBodyFont.getLineHeight(),
+            FontHelper.cardDescFont_N.getLineHeight(),
             Settings.CREAM_COLOR
         );
     }
@@ -185,10 +248,6 @@ public class QuestStatsScreen implements DropdownMenuListener {
             return 0.0f;
         }
         return (num * 100.0f)/den;
-    }
-
-    private void renderTrophy(SpriteBatch sb) {
-
     }
 
     private void renderRewards(SpriteBatch sb) {
@@ -219,10 +278,44 @@ public class QuestStatsScreen implements DropdownMenuListener {
         timesTaken = selectedQuestStats.timesTaken;
         timesCompleted = selectedQuestStats.timesComplete;
         timesFailed = selectedQuestStats.timesFailed;
-
+        
+        extraRows = 0;
         rewardBoxes.clear();
+        badgesToDraw.clear();
+
         if (selectedQuest == null) {
             return;
+        }
+
+        ArrayList<String> charactersCompletedAs = selectedQuestStats.charactersCompleted;
+        extraRows = (charactersCompletedAs.size() - 1) / BADGES_PER_ROW;
+
+        for (String s : charactersCompletedAs) {
+            try {
+                PlayerClass playerClass = AbstractPlayer.PlayerClass.valueOf(s);
+                Texture button_texture = null;
+                if (BaseMod.isBaseGameCharacter(playerClass)) {
+                    switch (playerClass) {
+                        case IRONCLAD:
+                            button_texture = ImageMaster.CHAR_SELECT_IRONCLAD;
+                            break;
+                        case THE_SILENT:
+                            button_texture = ImageMaster.CHAR_SELECT_SILENT;
+                            break;
+                        case DEFECT:
+                            button_texture = ImageMaster.CHAR_SELECT_DEFECT;
+                            break;
+                        case WATCHER:
+                            button_texture = ImageMaster.CHAR_SELECT_WATCHER;
+                            break;
+                    }
+                } else {
+                    button_texture = ImageMaster.loadImage(BaseMod.getPlayerButton(playerClass));
+                }
+                badgesToDraw.add(button_texture);
+            } catch (Exception e) {
+                logger.error("Error loading " + s + " character. Skipping for quest trophy data.");
+            }
         }
 
         this.descriptionHeight = FontHelper.getSmartHeight(FontHelper.cardDescFont_N, selectedQuest.description,
@@ -230,7 +323,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
             );
         this.descriptionHeight -= FontHelper.cardDescFont_N.getLineHeight();
 
-        float yLine = ((QUEST_DESCRIPTION_Y + this.descriptionHeight) - (QUEST_STAT_Y + FontHelper.tipBodyFont.getLineHeight())) / 2.0F;
+        float yLine = ((QUEST_DESCRIPTION_Y + this.descriptionHeight) - (QUEST_STAT_Y + FontHelper.cardDescFont_N.getLineHeight())) / 2.0F;
         yLine = (QUEST_DESCRIPTION_Y + this.descriptionHeight) - (StatRewardBox.FRAME_Y / 2.0F) - yLine;
 
         if (yLine > REWARD_Y) {

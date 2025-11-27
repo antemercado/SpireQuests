@@ -5,13 +5,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.badlogic.gdx.utils.Logger;
 import com.evacipated.cardcrawl.modthespire.lib.SpireConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 
 import spireQuests.Anniv8Mod;
 
@@ -20,6 +25,7 @@ public class QuestStatManager {
     public static final String COMPLETED = "completed";
     public static final String SEEN = "seen";
     public static final String TAKEN = "taken";
+    public static final String CHARACTERS = "characters";
     private static final String[] STAT_ENTRIES = {SEEN, TAKEN, COMPLETED, FAILED};
     
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -32,6 +38,7 @@ public class QuestStatManager {
     private static ArrayList<String> takenBuffer = new ArrayList<>();
     private static ArrayList<String> failedBuffer = new ArrayList<>();
     private static ArrayList<String> completedBuffer = new ArrayList<>();
+    private static Map<String, String> charBuffer = new HashMap();
     private static File file;
     private static boolean doNotLog = false;
     
@@ -99,7 +106,10 @@ public class QuestStatManager {
                 obj.addProperty(e, 0);
             }
         }
-
+        if (!obj.has(CHARACTERS)) {
+            obj.add(CHARACTERS, new JsonArray());
+        }
+        
         return obj;
     }
 
@@ -111,6 +121,7 @@ public class QuestStatManager {
     }
     public static void markComplete(String questID) {
         completedBuffer.add(questID);
+        charBuffer.put(questID, AbstractDungeon.player.chosenClass.name());
     }
     public static void markFailed(String questID) {
         failedBuffer.add(questID);
@@ -134,6 +145,19 @@ public class QuestStatManager {
         for (String q : failedBuffer) {
             JsonObject obj = getAndValidateQuestObject(save, q);
             obj.addProperty(FAILED, obj.get(FAILED).getAsInt() + 1);
+        }
+
+        for (Entry<String, String> e : charBuffer.entrySet()) {
+            JsonObject obj = getAndValidateQuestObject(save, e.getKey());
+            JsonArray array = obj.getAsJsonArray();
+            for (int i = 0; i < array.size(); i++) {
+                if (array.get(i).getAsString() == e.getValue()) {
+                    break;
+                }
+                array.add(e.getValue());
+            }
+            obj.remove(CHARACTERS);
+            obj.add(CHARACTERS, array);
         }
 
         saveRoot();
