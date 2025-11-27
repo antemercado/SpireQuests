@@ -13,6 +13,8 @@ public class QuestStats {
     public int timesTaken = 0;
     public int timesComplete = 0;
     public int timesFailed = 0;
+    public ArrayList<String> charactersCompleted = new ArrayList<>();
+    private Gson gson = new Gson();
 
     public QuestStats() {
         this.timesSeen = 0;
@@ -27,6 +29,10 @@ public class QuestStats {
         this.timesTaken = statObj.get(QuestStatManager.TAKEN).getAsInt();
         this.timesComplete = statObj.get(QuestStatManager.COMPLETED).getAsInt();
         this.timesFailed = statObj.get(QuestStatManager.FAILED).getAsInt();
+        JsonArray jsonArray = statObj.get(QuestStatManager.CHARACTERS).getAsJsonArray();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            this.charactersCompleted.add(jsonArray.get(i).getAsString());
+        }
     }
 
     public static QuestStats getAllStats() {
