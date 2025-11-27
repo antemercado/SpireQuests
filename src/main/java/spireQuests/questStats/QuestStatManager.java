@@ -149,15 +149,18 @@ public class QuestStatManager {
 
         for (Entry<String, String> e : charBuffer.entrySet()) {
             JsonObject obj = getAndValidateQuestObject(save, e.getKey());
-            JsonArray array = obj.getAsJsonArray();
+            JsonArray array = obj.get(CHARACTERS).getAsJsonArray();
+            boolean alreadyComplete = false;
             for (int i = 0; i < array.size(); i++) {
                 if (array.get(i).getAsString() == e.getValue()) {
+                    alreadyComplete = true;
                     break;
                 }
-                array.add(e.getValue());
             }
-            obj.remove(CHARACTERS);
-            obj.add(CHARACTERS, array);
+            if (alreadyComplete) {
+                continue;
+            }
+            array.add(e.getValue());
         }
 
         saveRoot();
