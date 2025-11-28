@@ -3,6 +3,9 @@ package spireQuests.questStats;
 import static spireQuests.Anniv8Mod.makeID;
 import static spireQuests.Anniv8Mod.makeUIPath;
 
+import java.lang.reflect.Field;
+
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -59,19 +62,18 @@ public class StatRewardBox implements IUIElement {
 
         this.body = reward.rewardText;
         if (reward instanceof RelicReward) {
-            relic = ((RelicReward)reward).getRelic().makeCopy();
+            this.relic = ((RelicReward)reward).getRelic().makeCopy();
             this.header = relic.name;
             this.body = relic.description;
         }
         if (reward instanceof CardReward) {
-            card = ((CardReward)reward).getCard().makeStatEquivalentCopy();
+            this.card = ((CardReward)reward).getCard().makeStatEquivalentCopy();
             this.img = new TextureRegion(CARD_TEX);
         }
         if (reward instanceof PotionReward) {
-            potion = ((PotionReward)reward).getPotion().makeCopy();
+            this.potion = ((PotionReward)reward).getPotion().makeCopy();
             this.header = potion.name;
             this.body = potion.description;
-            this.img = new TextureRegion(POTION_TEX);
         }
         if (reward instanceof RandomRelicReward) {
             this.header = uiStrings.TEXT[0];
@@ -104,17 +106,68 @@ public class StatRewardBox implements IUIElement {
             sb.draw(FRAME, xPos, yPos, FRAME_X, FRAME_Y);
         }
 
-        sb.draw(this.img, xPos + (FRAME_X - WIDTH) / 2, yPos + (FRAME_Y - HEIGHT) / 2, WIDTH, HEIGHT);
+        if (this.potion != null) {
+            try {
+                renderPotion(sb);
+            } catch (Exception e) {
+                this.img = new TextureRegion(POTION_TEX);
+                sb.draw(this.img, xPos + (FRAME_X - WIDTH) / 2, yPos + (FRAME_Y - HEIGHT) / 2, WIDTH, HEIGHT);
+            }
+        } else {
+            sb.draw(this.img, xPos + (FRAME_X - WIDTH) / 2, yPos + (FRAME_Y - HEIGHT) / 2, WIDTH, HEIGHT);
+        }
+
         if (this.hb.hovered) {
             if (card != null) {
                 card.current_x = InputHelper.mX + (AbstractCard.RAW_W * card.drawScale) * Settings.scale;
                 card.current_y = InputHelper.mY;
+                card.renderHoverShadow(sb);
                 card.render(sb);
             } else {
                ImageHelper.tipBoxAtMousePos(this.header, this.body);
             }
         }
      }
+
+    private void renderPotion(SpriteBatch sb) throws 
+        NoSuchFieldException,
+        SecurityException,
+        IllegalArgumentException,
+        IllegalAccessException 
+    {
+        Field containerImg = AbstractPotion.class.getDeclaredField("containerImg");
+        Field outlineImg = AbstractPotion.class.getDeclaredField("outlineImg");
+        Field liquidImg = AbstractPotion.class.getDeclaredField("liquidImg");
+        Field hybridImg = AbstractPotion.class.getDeclaredField("hybridImg");
+        Field spotsImg = AbstractPotion.class.getDeclaredField("spotsImg");
+
+        containerImg.setAccessible(true);
+        outlineImg.setAccessible(true);
+        liquidImg.setAccessible(true);
+        hybridImg.setAccessible(true);
+        spotsImg.setAccessible(true);
+
+        Texture x;
+        if (this.potion.liquidColor != null) {
+            x = (Texture) liquidImg.get(this.potion);
+            sb.setColor(this.potion.liquidColor);
+            sb.draw(x, xPos + (FRAME_X - WIDTH) / 2, yPos + (FRAME_Y - HEIGHT) / 2, 100.0F, 100.0F);
+        }
+        if (this.potion.hybridColor != null) {
+            x = (Texture) hybridImg.get(this.potion);
+            sb.setColor(this.potion.hybridColor);
+            sb.draw(x, xPos + (FRAME_X - WIDTH) / 2, yPos + (FRAME_Y - HEIGHT) / 2, 100.0F, 100.0F);
+        }
+        if (this.potion.spotsColor != null) {
+            x = (Texture) spotsImg.get(this.potion);
+            sb.setColor(this.potion.spotsColor);
+            sb.draw(x, xPos + (FRAME_X - WIDTH) / 2, yPos + (FRAME_Y - HEIGHT) / 2, 100.0F, 100.0F);
+        }
+        
+        sb.setColor(Color.WHITE);
+        x = (Texture) containerImg.get(this.potion);
+        sb.draw(x, xPos + (FRAME_X - WIDTH) / 2, yPos + (FRAME_Y - HEIGHT) / 2, 100.0F, 100.0F);
+    }
 
     public void update() {
         this.hb.update();
