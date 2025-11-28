@@ -14,7 +14,6 @@ public class QuestStats {
     public int timesComplete = 0;
     public int timesFailed = 0;
     public ArrayList<String> charactersCompleted = new ArrayList<>();
-    private Gson gson = new Gson();
 
     public QuestStats() {
         this.timesSeen = 0;
