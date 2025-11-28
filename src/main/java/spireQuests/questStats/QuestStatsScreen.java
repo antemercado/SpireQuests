@@ -50,7 +50,9 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private static final Logger logger = LogManager.getLogger(QuestStatsScreen.class.getName());
 
     private static final float X_ANCHOR = 440.0F * Settings.xScale;
+    // private static final float X_ANCHOR = Settings.WIDTH * 0.23F;
     private static final float Y_ANCHOR = (1080.0F - 195.0F) * Settings.yScale; // 885
+    // private static final float Y_ANCHOR = Settings.HEIGHT * 0.82F; // 885
     
     private static final float LEFT_ALIGN = X_ANCHOR + (25.0F * Settings.xScale);
     private static final float DROPDOWN_Y = Y_ANCHOR - (75.0F * Settings.yScale);
@@ -70,9 +72,9 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private static final float BG_Y = 225.0F * Settings.yScale;
 
     private static final float BANNER_TOP_Y = Y_ANCHOR - (345.0F * Settings.yScale);
-    private static final float BANNER_X = X_ANCHOR + (660.0F * Settings.yScale);
+    private static final float BANNER_X = X_ANCHOR + (660.0F * Settings.xScale);
 
-    private static final float BADGE_X = X_ANCHOR + (713.0F * Settings.yScale);
+    private static final float BADGE_X = X_ANCHOR + (713.0F * Settings.xScale);
     private static final float BADGE_Y = Y_ANCHOR - (455.0F * Settings.yScale);
     private static final float BADGE_WIDTH = 100.0F * Settings.xScale;
     private static final float BADGE_HEIGHT = 100.0F * Settings.yScale;
@@ -176,17 +178,17 @@ public class QuestStatsScreen implements DropdownMenuListener {
     }
 
     private void renderBG(SpriteBatch sb) {
-        sb.draw(BG, BG_X, BG_Y);
-        sb.draw(BANNER_TOP, BANNER_X, BANNER_TOP_Y);
+        sb.draw(BG, BG_X, BG_Y, BG.getWidth() * Settings.xScale, BG.getHeight() * Settings.yScale);
+        sb.draw(BANNER_TOP, BANNER_X, BANNER_TOP_Y, BANNER_TOP.getWidth() * Settings.xScale, BANNER_TOP.getHeight() * Settings.yScale);
 
         float midDraw = BANNER_TOP_Y;
         for (int i = 0; i < extraRows; i++) {
             midDraw -= (i + 1) * BANNER_EXTRA.getHeight() * Settings.yScale;
-            sb.draw(BANNER_EXTRA, BANNER_X, midDraw);
+            sb.draw(BANNER_EXTRA, BANNER_X, midDraw, BANNER_EXTRA.getWidth() * Settings.xScale, BANNER_EXTRA.getHeight() * Settings.yScale);
         }
 
-        float botDraw = midDraw - BANNER_BOT.getHeight() * Settings.yScale;
-        sb.draw(BANNER_BOT, BANNER_X, botDraw);
+        float botDraw = midDraw - BANNER_BOT.getHeight()* Settings.yScale;
+        sb.draw(BANNER_BOT, BANNER_X, botDraw, BANNER_BOT.getWidth() * Settings.xScale, BANNER_BOT.getHeight() * Settings.yScale);
     }
 
     private void renderTrophy(SpriteBatch sb) {
@@ -221,7 +223,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
             float xStart = BADGE_X + ((BADGES_PER_ROW * BADGE_WIDTH) - rowWidth) / 2.0F;
 
             float xDraw = xStart + (col * BADGE_WIDTH);
-            float yDraw = BADGE_Y - row * (BADGE_HEIGHT * Settings.yScale);
+            float yDraw = BADGE_Y - row * (BADGE_HEIGHT);
 
             sb.draw(new TextureRegion(t), xDraw, yDraw, BADGE_WIDTH, BADGE_HEIGHT);
         }
