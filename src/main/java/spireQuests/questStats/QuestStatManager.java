@@ -49,7 +49,10 @@ public class QuestStatManager {
 
         if (!file.exists()) {
             rootJson = new JsonObject();
-            saveRoot();
+            if (!saveRoot()) {
+                logger.info("Error initializing Quest Stats json. Stats will not log...");
+                doNotLog = true;
+            }
         } else {
             loadRoot();
         }
@@ -60,22 +63,24 @@ public class QuestStatManager {
             rootJson = gson.fromJson(reader, JsonObject.class);
         } catch (IOException e) {
             e.printStackTrace();
-            logger.info("Error loading Quest Stats json. Creating new JsonObject. Stats will not log...");
+            logger.info("Error loading Quest Stats json. Stats will not log...");
             doNotLog = true;
             rootJson = new JsonObject();
         }
     }
 
-    private static void saveRoot() {
+    private static boolean saveRoot() {
         if (doNotLog) {
             logger.error("ERROR: Cannot load Quest Stats json. Will not log quest data for this session...");
-            return;
+            return false;
         }
         try (FileWriter writer = new FileWriter(file)){
             gson.toJson(rootJson, writer);
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
             logger.error("Error saving Quest Stats json, skipping ...");
+            return false;
         }
     }
 
@@ -163,8 +168,9 @@ public class QuestStatManager {
             array.add(e.getValue());
         }
 
-        saveRoot();
-        resetBuffers();
+        if (saveRoot()){
+            resetBuffers();
+        }
     }
 
     private static void resetBuffers() {
