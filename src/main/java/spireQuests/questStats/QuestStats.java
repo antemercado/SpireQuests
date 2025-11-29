@@ -9,18 +9,22 @@ import com.google.gson.*;
 import spireQuests.quests.QuestManager;
 
 public class QuestStats {    
+
+    public static int BRONZE_THRESH = 1;
+    public static int SILVER_THRESH = 10;
+    public static int GOLD_THRESH = 25;
+
     public int timesSeen = 0;
     public int timesTaken = 0;
     public int timesComplete = 0;
     public int timesFailed = 0;
     public ArrayList<String> charactersCompleted = new ArrayList<>();
 
-    public QuestStats() {
-        this.timesSeen = 0;
-        this.timesTaken = 0;
-        this.timesComplete = 0;
-        this.timesFailed = 0;       
-    }
+    public int bronzes = 0;
+    public int silvers = 0;
+    public int golds = 0;
+
+    public QuestStats() {}
 
     public QuestStats(String qid) {
         JsonObject statObj = QuestStatManager.getStatsForQuest(qid);
@@ -31,6 +35,16 @@ public class QuestStats {
         JsonArray jsonArray = statObj.get(QuestStatManager.CHARACTERS).getAsJsonArray();
         for (int i = 0; i < jsonArray.size(); i++) {
             this.charactersCompleted.add(jsonArray.get(i).getAsString());
+        }
+
+        if (this.timesComplete >= BRONZE_THRESH){
+            this.bronzes = 1;
+        }
+        if (this.timesComplete >= SILVER_THRESH){
+            this.silvers = 1;
+        }
+        if (this.timesComplete >= GOLD_THRESH){
+            this.golds = 1;
         }
     }
 
@@ -45,6 +59,10 @@ public class QuestStats {
         ret.timesTaken = allStats.stream().mapToInt(s -> s.timesTaken).sum();
         ret.timesComplete = allStats.stream().mapToInt(s -> s.timesComplete).sum();
         ret.timesFailed = allStats.stream().mapToInt(s -> s.timesFailed).sum();
+
+        ret.bronzes = (int) allStats.stream().mapToInt(s -> s.bronzes).sum();
+        ret.silvers = (int) allStats.stream().mapToInt(s -> s.silvers).sum();
+        ret.golds = (int) allStats.stream().mapToInt(s -> s.golds).sum();
         return ret;
     }
 }
