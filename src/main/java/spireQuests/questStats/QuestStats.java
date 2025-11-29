@@ -12,8 +12,8 @@ import spireQuests.quests.QuestManager;
 public class QuestStats {    
 
     public static int BRONZE_THRESH = 1;
-    public static int SILVER_THRESH = 10;
-    public static int GOLD_THRESH = 25;
+    public static int SILVER_THRESH = 5;
+    public static int GOLD_THRESH = 10;
 
     public int timesSeen = 0;
     public int timesTaken = 0;
