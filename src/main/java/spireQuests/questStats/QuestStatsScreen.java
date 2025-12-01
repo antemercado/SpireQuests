@@ -461,7 +461,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
         }
 
         float offset = 0.0f;
-        if (selectedQuest.useDefaultReward) { // I thought this var was for if you had custom rewards or used addRewards. I was incorrect.
+        if (selectedQuest.questRewards.isEmpty()) {
             rewardBoxes.add(new StatRewardBox(selectedQuest, REWARD_X, yLine));
         } else {
             for (QuestReward r : selectedQuest.questRewards) {
