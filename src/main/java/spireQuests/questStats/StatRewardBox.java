@@ -24,6 +24,7 @@ import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestReward;
 import spireQuests.quests.QuestReward.CardReward;
 import spireQuests.quests.QuestReward.GoldReward;
+import spireQuests.quests.QuestReward.MaxHPReward;
 import spireQuests.quests.QuestReward.PotionReward;
 import spireQuests.quests.QuestReward.RandomRelicReward;
 import spireQuests.quests.QuestReward.RelicReward;
@@ -38,6 +39,7 @@ public class StatRewardBox implements IUIElement {
     private static final Texture POTION_TEX = TexLoader.getTexture(makeUIPath("stats/potion.png"));
     private static final Texture RANDOM_RELIC_TEX = TexLoader.getTexture(makeUIPath("stats/relic.png"));
     private static final Texture GOLD_TEX = TexLoader.getTexture(makeUIPath("stats/gold.png"));
+    private static final Texture HEALTH_TEX = TexLoader.getTexture(makeUIPath("stats/heart.png"));
 
     private static final String ID = makeID(StatRewardBox.class.getSimpleName());
     private UIStrings uiStrings = CardCrawlGame.languagePack.getUIString(ID);
@@ -60,6 +62,7 @@ public class StatRewardBox implements IUIElement {
         this(xPos, yPos);
         this.img = reward.icon();
 
+        this.header = uiStrings.TEXT[2];
         this.body = reward.rewardText;
         if (reward instanceof RelicReward) {
             this.relic = ((RelicReward)reward).getRelic().makeCopy();
@@ -82,6 +85,10 @@ public class StatRewardBox implements IUIElement {
         if (reward instanceof GoldReward) {
             this.header = uiStrings.TEXT[1];
             this.img = new TextureRegion(GOLD_TEX);
+        }
+        if (reward instanceof MaxHPReward) {
+            this.header = uiStrings.TEXT[3];
+            this.img = new TextureRegion(HEALTH_TEX);
         }
 
     }
