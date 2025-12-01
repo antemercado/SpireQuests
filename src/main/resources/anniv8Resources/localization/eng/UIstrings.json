@@ -91,6 +91,12 @@
       "Quests Failed"
     ]
   },
+  "${ModID}:QuestStatsMainMenuPanel": {
+    "TEXT": [
+      "Quest Log",
+      "View all quests along with your trophy and medal status."
+    ]
+  },
   "${ModID}:StatRewardBox": {
     "TEXT": [
       "Random Relic Reward",

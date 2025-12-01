@@ -191,12 +191,14 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private void updateButtons() {
         cancelButton.update();
         if (cancelButton.hb.clicked || InputHelper.pressedEscape) {
-            CardCrawlGame.mainMenuScreen.superDarken = false;
+            // CardCrawlGame.mainMenuScreen.superDarken = false;
             InputHelper.pressedEscape = false;
             cancelButton.hb.clicked = false;
+            CardCrawlGame.sound.play("DECK_CLOSE", 0.1F);
             cancelButton.hide();
-            CardCrawlGame.mainMenuScreen.screen = MainMenuScreen.CurScreen.MAIN_MENU;
-            CardCrawlGame.mainMenuScreen.lighten();
+            CardCrawlGame.mainMenuScreen.panelScreen.refresh();
+            // CardCrawlGame.mainMenuScreen.screen = MainMenuScreen.CurScreen.STATS;
+            // CardCrawlGame.mainMenuScreen.lighten();
         }
     }
 
