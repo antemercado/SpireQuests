@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -421,32 +422,30 @@ public class QuestStatsScreen implements DropdownMenuListener {
         HashSet<String> charactersCompletedAs = selectedQuestStats.charactersCompleted;
         extraRows = (charactersCompletedAs.size() - 1) / BADGES_PER_ROW;
 
-        for (String s : charactersCompletedAs) {
-            try {
-                PlayerClass playerClass = AbstractPlayer.PlayerClass.valueOf(s);
-                Texture button_texture = null;
-                if (BaseMod.isBaseGameCharacter(playerClass)) {
-                    switch (playerClass) {
-                        case IRONCLAD:
-                            button_texture = ImageMaster.CHAR_SELECT_IRONCLAD;
-                            break;
-                        case THE_SILENT:
-                            button_texture = ImageMaster.CHAR_SELECT_SILENT;
-                            break;
-                        case DEFECT:
-                            button_texture = ImageMaster.CHAR_SELECT_DEFECT;
-                            break;
-                        case WATCHER:
-                            button_texture = ImageMaster.CHAR_SELECT_WATCHER;
-                            break;
-                    }
-                } else {
-                    button_texture = ImageMaster.loadImage(BaseMod.getPlayerButton(playerClass));
-                }
-                badgesToDraw.add(button_texture);
-            } catch (Exception e) {
-                logger.error("Error loading " + s + " character. Skipping for quest trophy data.");
+        for (AbstractPlayer chars : CardCrawlGame.characterManager.getAllCharacters()) {
+            if (!charactersCompletedAs.contains(chars.chosenClass.toString())) {
+                continue;
             }
+            Texture button_texture = null;
+            if (BaseMod.isBaseGameCharacter(chars)) {
+                switch (chars.chosenClass) {
+                    case IRONCLAD:
+                        button_texture = ImageMaster.CHAR_SELECT_IRONCLAD;
+                        break;
+                    case THE_SILENT:
+                        button_texture = ImageMaster.CHAR_SELECT_SILENT;
+                        break;
+                    case DEFECT:
+                        button_texture = ImageMaster.CHAR_SELECT_DEFECT;
+                        break;
+                    case WATCHER:
+                        button_texture = ImageMaster.CHAR_SELECT_WATCHER;
+                        break;
+                }
+            } else {
+                button_texture = ImageMaster.loadImage(BaseMod.getPlayerButton(chars.chosenClass));
+            }
+            badgesToDraw.add(button_texture);
         }
 
         this.descriptionHeight = FontHelper.getSmartHeight(FontHelper.cardDescFont_N, selectedQuest.description,
