@@ -1,6 +1,7 @@
 package spireQuests.questStats;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,7 +9,9 @@ import java.util.stream.Collectors;
 import com.google.gson.*;
 import com.megacrit.cardcrawl.characters.AbstractPlayer.PlayerClass;
 
+import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
+import spireQuests.quests.Statistics;
 
 public class QuestStats {    
 
@@ -81,7 +84,9 @@ public class QuestStats {
     }
 
     public static QuestStats getAllStats() {
-        List<String> allIDs = QuestManager.getAllQuests().stream().map(q -> q.id).collect(Collectors.toList());
+        Collection<AbstractQuest> allQuests = QuestManager.getAllQuests();
+        Statistics.removeExampleQuests(allQuests);
+        List<String> allIDs = allQuests.stream().map(q -> q.id).collect(Collectors.toList());
         List<QuestStats> allStats = new ArrayList<>();
         for (String q : allIDs) {
             allStats.add(new QuestStats(q));

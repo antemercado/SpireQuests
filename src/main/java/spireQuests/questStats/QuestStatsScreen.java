@@ -23,6 +23,7 @@ import basemod.BaseMod;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
 import spireQuests.quests.QuestReward;
+import spireQuests.quests.Statistics;
 import spireQuests.util.TexLoader;
 
 import static spireQuests.Anniv8Mod.makeID;
@@ -151,6 +152,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
     
     public QuestStatsScreen() {
         allQuests = QuestManager.getAllQuests();
+        Statistics.removeExampleQuests(allQuests);
         allQuestsMap = allQuests.stream().collect(Collectors.toMap(q -> q.id, q -> q));
         nameIDMap = allQuests.stream().collect(Collectors.toMap(q -> q.name, q -> q.id));
         dropdownList = new ArrayList<>(allQuestsMap.values().stream().map(q -> q.name).collect(Collectors.toList()));
