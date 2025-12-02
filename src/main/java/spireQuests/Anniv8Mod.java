@@ -440,9 +440,8 @@ public class Anniv8Mod implements
         }
         try {
             modConfig.setBool("CompletedStatsFTUE", true);
-            // modConfig.save();
-            logger.info("Would have saved FTUE info");
-        } catch (Exception e) { // IOException
+            modConfig.save();
+        } catch (IOException e) {
             logger.error(e);
         }
     }
