@@ -48,7 +48,7 @@ public class QuestStatsMenuPatch {
                     offset = 225.0F;
                     __instance.panels.add(new MainMenuPanelButton(PanelClickResult.STAT_CHAR, PanelColor.BLUE, Settings.WIDTH / 2.0F - 3 * offset * Settings.scale, y));
                     __instance.panels.add(new MainMenuPanelButton(PanelClickResult.STAT_HISTORY, PanelColor.RED, Settings.WIDTH / 2.0F - offset * Settings.scale, y));
-                    __instance.panels.add(new MainMenuPanelButton(PanelClickResult.STAT_LEADERBOARDS, PanelColor.BEIGE, Settings.WIDTH / 2.0F + offset, y));
+                    __instance.panels.add(new MainMenuPanelButton(PanelClickResult.STAT_LEADERBOARDS, PanelColor.BEIGE, Settings.WIDTH / 2.0F + offset * Settings.scale, y));
                     __instance.panels.add(new QuestStatsMainMenuPanel(Enums.QUEST_STATS, PanelColor.BEIGE, Settings.WIDTH / 2.0F + 3 * offset * Settings.scale, y));
                 }
                 SpireReturn.Return();
