@@ -108,7 +108,7 @@
   "${ModID}:StatisticsFTUE": {
     "TEXT": [
       "Quest Log",
-      "As you complete quests in the Spire you can earn trophies and badges. You can view your progress toward them in the Quest Log section of the Statistics menu.",
+      "As you complete quests in the Spire you'll earn trophies and badges. You can view your progress toward them in the Quest Log section of the Statistics menu.",
       "Continue"
     ]
   }
