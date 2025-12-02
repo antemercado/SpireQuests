@@ -157,7 +157,7 @@ public class QuestStatManager {
             JsonArray array = obj.get(CHARACTERS).getAsJsonArray();
             boolean alreadyComplete = false;
             for (int i = 0; i < array.size(); i++) {
-                if (array.get(i).getAsString() == e.getValue()) {
+                if (array.get(i).getAsString().equals(e.getValue())) {
                     alreadyComplete = true;
                     break;
                 }
