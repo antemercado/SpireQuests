@@ -52,6 +52,20 @@ public class QuestRunHistoryPatch {
                 questPickupPerFloorLog.get(AbstractDungeon.player).addAll(list);
             }
         });
+        BaseMod.addSaveField(Anniv8Mod.makeID("QuestCompletionPerFloor"), new CustomSavable<List<List<String>>>() {
+            @Override
+            public List<List<String>> onSave() {
+                return questCompletionPerFloorLog.get(AbstractDungeon.player);
+            }
+            
+            @Override
+            public void onLoad(List<List<String>> list) {
+                if (list == null) {
+                    return;
+                }
+                questCompletionPerFloorLog.get(AbstractDungeon.player).addAll(list);
+            }
+        });
         BaseMod.addSaveField(Anniv8Mod.makeID("QuestFailurePerFloor"), new CustomSavable<List<List<String>>>() {
             @Override
             public List<List<String>> onSave() {
@@ -64,20 +78,6 @@ public class QuestRunHistoryPatch {
                     return;
                 }
                 questFailurePerFloorLog.get(AbstractDungeon.player).addAll(list);
-            }
-        });
-        BaseMod.addSaveField(Anniv8Mod.makeID("QuestCompletionPerFloor"), new CustomSavable<List<List<String>>>() {
-            @Override
-            public List<List<String>> onSave() {
-                return questCompletionPerFloorLog.get(AbstractDungeon.player);
-            }
-
-            @Override
-            public void onLoad(List<List<String>> list) {
-                if (list == null) {
-                    return;
-                }
-                questCompletionPerFloorLog.get(AbstractDungeon.player).addAll(list);
             }
         });
     }
