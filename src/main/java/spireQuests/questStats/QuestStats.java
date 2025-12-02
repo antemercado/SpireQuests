@@ -96,4 +96,12 @@ public class QuestStats {
         ret.golds = (int) allStats.stream().mapToInt(s -> s.golds).sum();
         return ret;
     }
+
+    public static boolean hasFinishedAnyQuest() {
+        QuestStats qs = getAllStats();
+        if (qs.timesComplete > 0 || qs.timesFailed > 0) {
+            return true;
+        }
+        return false;
+    }
 }

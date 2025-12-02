@@ -47,6 +47,7 @@ import spireQuests.util.CompatUtil;
 import spireQuests.util.QuestStringsUtils;
 import spireQuests.util.TexLoader;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -422,6 +423,28 @@ public class Anniv8Mod implements
     @Override
     public void receivePostDeath() {
         QuestManager.failAllActiveQuests();
+    }
+
+
+    public static boolean isStatsFTUEComplete() {
+        if (modConfig == null) {
+            return true;
+        }
+        return modConfig.getBool("CompletedStatsFTUE");
+    }
+
+
+    public static void completeStatsFTUE() {
+        if (modConfig == null) {
+            return;
+        }
+        try {
+            modConfig.setBool("CompletedStatsFTUE", true);
+            // modConfig.save();
+            logger.info("Would have saved FTUE info");
+        } catch (Exception e) { // IOException
+            logger.error(e);
+        }
     }
 
 }
