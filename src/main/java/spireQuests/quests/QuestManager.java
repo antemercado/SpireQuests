@@ -152,7 +152,11 @@ public class QuestManager {
 
             QuestStatManager.markFailed(quest.id);
             List<List<String>> questFailurePerFloor = QuestRunHistoryPatch.questFailurePerFloorLog.get(AbstractDungeon.player);
-            questFailurePerFloor.get(questFailurePerFloor.size() - 1).add(quest.id);
+            if (!questFailurePerFloor.isEmpty()) {
+                questFailurePerFloor.get(questFailurePerFloor.size() - 1).add(quest.id);
+            } else {
+                Anniv8Mod.logger.error("questFailurePerFloor was empty, not adding quest to run history.");
+            }
             return;
         }
 
@@ -180,7 +184,11 @@ public class QuestManager {
 
         QuestStatManager.markFailed(quest.id);
         List<List<String>> questFailurePerFloor = QuestRunHistoryPatch.questFailurePerFloorLog.get(AbstractDungeon.player);
-        questFailurePerFloor.get(questFailurePerFloor.size() - 1).add(quest.id);
+        if (!questFailurePerFloor.isEmpty()) {
+            questFailurePerFloor.get(questFailurePerFloor.size() - 1).add(quest.id);
+        } else {
+            Anniv8Mod.logger.error("questFailurePerFloor was empty, not adding quest to run history.");
+        }
     }
 
     public void update() {
