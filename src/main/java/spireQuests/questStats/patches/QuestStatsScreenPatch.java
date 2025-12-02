@@ -2,11 +2,8 @@ package spireQuests.questStats.patches;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evacipated.cardcrawl.modthespire.lib.*;
-import com.megacrit.cardcrawl.core.CardCrawlGame;
-import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.screens.mainMenu.MainMenuScreen;
 import com.megacrit.cardcrawl.screens.mainMenu.MenuButton;
-import javassist.CtBehavior;
 import spireQuests.questStats.QuestStatsScreen;
 
 public class QuestStatsScreenPatch {
