@@ -1,6 +1,7 @@
 package spireQuests.questStats;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,7 @@ public class QuestStats {
     public int timesTaken = 0;
     public int timesComplete = 0;
     public int timesFailed = 0;
-    public ArrayList<String> charactersCompleted = new ArrayList<>();
+    public HashSet<String> charactersCompleted = new HashSet<>();
 
     // We're using ints and not booleans here because
     // AllQuestStats is just a QuestStats object as well.

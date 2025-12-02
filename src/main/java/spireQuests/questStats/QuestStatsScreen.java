@@ -31,6 +31,7 @@ import static spireQuests.Anniv8Mod.makeUIPath;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -417,7 +418,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
             return;
         }
 
-        ArrayList<String> charactersCompletedAs = selectedQuestStats.charactersCompleted;
+        HashSet<String> charactersCompletedAs = selectedQuestStats.charactersCompleted;
         extraRows = (charactersCompletedAs.size() - 1) / BADGES_PER_ROW;
 
         for (String s : charactersCompletedAs) {
