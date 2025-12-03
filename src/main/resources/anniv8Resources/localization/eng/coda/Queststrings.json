@@ -29,5 +29,14 @@
       "Take ",
       " damage within 17 floors."
     ]
+  },
+  "${ModID}:BountyCharadeQuest": {
+    "TITLE": "Bounty: Charade Orb",
+    "DESCRIPTION": "???",
+    "AUTHOR": "coda",
+    "REWARD": "???",
+    "TRACKER_TEXT": [
+      "Orb cut down"
+    ]
   }
 }
