@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
@@ -35,7 +36,8 @@ public class StatRewardBox implements IUIElement {
     private static final Texture CUSTOM_REWARD_IMG = ImageMaster.loadImage("images/ui/run_mods/shiny.png");
     private static final Texture FRAME = TexLoader.getTexture(makeUIPath("stats/reward_frame.png"));
     private static final Texture FRAME_HOVER = TexLoader.getTexture(makeUIPath("stats/reward_frame_hover.png"));
-    private static final Texture CARD_TEX = TexLoader.getTexture(makeUIPath("stats/card.png"));
+    private static final Texture CARD_BG_TEX = TexLoader.getTexture(makeUIPath("stats/card.png"));
+    private static final Texture CARD_FG_TEX = TexLoader.getTexture(makeUIPath("stats/card_fg.png"));
     private static final Texture POTION_TEX = TexLoader.getTexture(makeUIPath("stats/potion.png"));
     private static final Texture RANDOM_RELIC_TEX = TexLoader.getTexture(makeUIPath("stats/relic.png"));
     private static final Texture GOLD_TEX = TexLoader.getTexture(makeUIPath("stats/gold.png"));
@@ -71,7 +73,6 @@ public class StatRewardBox implements IUIElement {
         }
         if (reward instanceof CardReward) {
             this.card = ((CardReward)reward).getCard().makeStatEquivalentCopy();
-            this.img = new TextureRegion(CARD_TEX);
         }
         if (reward instanceof PotionReward) {
             this.potion = ((PotionReward)reward).getPotion().makeCopy();
@@ -113,7 +114,29 @@ public class StatRewardBox implements IUIElement {
             sb.draw(FRAME, xPos, yPos, FRAME_X, FRAME_Y);
         }
 
-        if (this.potion != null) {
+        if (this.card != null) {
+            Color cardBGColor = Color.WHITE;
+            switch (this.card.color) {
+                case RED:
+                    cardBGColor = Color.SCARLET;
+                    break;
+                case GREEN:
+                    cardBGColor = Color.CHARTREUSE;
+                    break;
+                case BLUE:
+                    cardBGColor = Color.SKY;
+                    break;
+                case PURPLE:
+                    cardBGColor = Settings.PURPLE_COLOR;
+                    break;
+            }
+            sb.setColor(cardBGColor);
+            this.img = new TextureRegion(CARD_BG_TEX);
+            sb.draw(this.img, xPos + (FRAME_X - WIDTH) / 2, yPos + (FRAME_Y - HEIGHT) / 2, WIDTH, HEIGHT);
+            sb.setColor(Color.WHITE);
+            this.img = new TextureRegion(CARD_FG_TEX);
+            sb.draw(this.img, xPos + (FRAME_X - WIDTH) / 2, yPos + (FRAME_Y - HEIGHT) / 2, WIDTH, HEIGHT);
+        } else if (this.potion != null) {
             try {
                 renderPotion(sb);
             } catch (Exception e) {
