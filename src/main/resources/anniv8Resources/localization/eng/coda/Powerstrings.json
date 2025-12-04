@@ -1,0 +1,9 @@
+{
+  "${ModID}:FakeVigorPower": {
+    "NAME": "Vigor",
+    "DESCRIPTIONS": [
+      "This enemies next Attack deals #b",
+      " additional damage."
+    ]
+  }
+}

@@ -1,11 +1,11 @@
 {
-  "${ModID}:ICEliteMonster": {
+  "${ModID}:CharadeMonster": {
     "MOVES": [
       "Demon Form",
       "Ironwave",
       "Bash",
       "Twin Strike"
     ],
-    "NAME": "Red Menace"
+    "NAME": "Charade Orb"
   }
 }
