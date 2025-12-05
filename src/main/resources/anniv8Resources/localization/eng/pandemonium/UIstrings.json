@@ -1,0 +1,7 @@
+{
+  "${ModID}:PristineModifier": {
+    "TITLE": "Pristine",
+    "DESCRIPTION": "So new it's shiny! Appears randomly in card rewards while the quest is active.",
+    "AUTHOR": "Pandemonium"
+  }
+}
