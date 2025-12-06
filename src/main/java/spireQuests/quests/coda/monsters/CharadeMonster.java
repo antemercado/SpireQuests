@@ -16,6 +16,7 @@ import com.megacrit.cardcrawl.actions.common.DamageAction;
 import com.megacrit.cardcrawl.actions.common.GainBlockAction;
 import com.megacrit.cardcrawl.actions.common.MakeTempCardInDiscardAction;
 import com.megacrit.cardcrawl.actions.common.RollMoveAction;
+import com.megacrit.cardcrawl.actions.utility.WaitAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.cards.DamageInfo.DamageType;
@@ -24,11 +25,13 @@ import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.localization.MonsterStrings;
 import com.megacrit.cardcrawl.powers.ArtifactPower;
+import com.megacrit.cardcrawl.powers.BufferPower;
 import com.megacrit.cardcrawl.powers.PlatedArmorPower;
 import com.megacrit.cardcrawl.powers.StrengthPower;
 import com.megacrit.cardcrawl.powers.WeakPower;
 
 import spireQuests.abstracts.AbstractSQMonster;
+import spireQuests.quests.coda.powers.MonsterSpiritShieldPower;
 import spireQuests.util.Wiz;
 public class CharadeMonster extends AbstractSQMonster {
 
@@ -42,7 +45,7 @@ public class CharadeMonster extends AbstractSQMonster {
     private static final float HB_W = 420.0F;
     private static final float HB_H = 250.0F; //534
 
-    private static final Byte IRONCLAD = 0, SILENT = 2, DEFECT = 3, WATCHER = 4, WAKEUP = 5;
+    private static final Byte IRONCLAD = 0, SILENT = 1, DEFECT = 2, WATCHER = 3, WAKEUP = 4;
 
     private enum OrbColor {
         RED,
@@ -61,6 +64,9 @@ public class CharadeMonster extends AbstractSQMonster {
     private int blueBuffAmount;
     private int purpleAttackBuff;
     private boolean isAwake;
+    private int redBlockAmount;
+    private int blueDamageAmount;
+    private boolean redDebuffUpgraded = false;
     
     public CharadeMonster() {
         this(0, 200);
@@ -78,36 +84,48 @@ public class CharadeMonster extends AbstractSQMonster {
         Collections.shuffle(validColors, new Random(AbstractDungeon.aiRng.randomLong()));
 
         this.turnsTaken = 0;
-        this.redDebuffAmount = 3;
-        this.greenAttackAmount = 4;
-        this.greenDebuffAmount = 1;
-        this.blueBuffAmount = 2;
-        this.purpleDefendBuff = 8;
-        this.purpleAttackBuff = 1;
 
+        this.redBlockAmount = 20;
+        this.redDebuffAmount = 2;
+        
+        this.greenAttackAmount = 4;
+        this.greenDebuffAmount = 2;
+        
+        this.blueDamageAmount = 28;
+        this.blueBuffAmount = 1;
+        
+        this.purpleDefendBuff = 4;
+        this.purpleAttackBuff = 1;
+        
         if (AbstractDungeon.ascensionLevel >= 3) {
+            this.blueDamageAmount = 32;
+
             this.greenAttackAmount = 5;
         }
         if (AbstractDungeon.ascensionLevel >= 8) {
-            this.purpleDefendBuff = 12;
+            this.purpleDefendBuff = 6;
         }
         if (AbstractDungeon.ascensionLevel >= 18) {
-            this.redDebuffAmount = 5;
-            this.greenDebuffAmount = 2;
-            this.blueBuffAmount = 5;
-            this.purpleAttackBuff = 2;
+            this.redDebuffUpgraded = true;
+
+            this.blueBuffAmount = 2;
+            this.blueDamageAmount = 14;
         }
 
         addMove(IRONCLAD, Intent.DEFEND_DEBUFF);
-        addMove(SILENT, Intent.ATTACK_DEBUFF, calcAscensionDamage(5), greenAttackAmount, true);
-        addMove(DEFECT, Intent.ATTACK_BUFF, calcAscensionDamage(40));
+        addMove(SILENT, Intent.ATTACK_DEBUFF, 7, greenAttackAmount, true);
+        if (AbstractDungeon.ascensionLevel >= 18) {
+            addMove(DEFECT, Intent.ATTACK_BUFF, calcAscensionDamage(blueDamageAmount), 2, true);
+        } else {
+            addMove(DEFECT, Intent.ATTACK_BUFF, calcAscensionDamage(blueDamageAmount));
+        }
         addMove(WATCHER, Intent.DEFEND_BUFF);
         addMove(WAKEUP, Intent.UNKNOWN);
 
         setHp(calcAscensionTankiness(HP_MIN), calcAscensionTankiness(HP_MAX));
         
         this.loadAnimation(makeContributionPath("coda", "charadeOrb/skeleton.atlas"), makeContributionPath("coda", "charadeOrb/skeleton.json"), 1.0F);
-        AnimationState.TrackEntry e1 = this.state.setAnimation(0, "idle", true);
+        AnimationState.TrackEntry e1 = this.state.setAnimation(0, "asleep", true);
         AnimationState.TrackEntry e2 = this.state.setAnimation(1, "color_loop", true);
         e1.setTimeScale(1.0F);
         e2.setTimeScale(1.0F);
@@ -115,6 +133,9 @@ public class CharadeMonster extends AbstractSQMonster {
         stateData.setMix("attack", "idle", 0.25F);
         stateData.setMix("idle", "hit", 0.1F);
         stateData.setMix("idle", "attack", 0.1F);
+        stateData.setMix("wake", "asleep", 0.3F);
+        stateData.setMix("idle", "wake", 0.3F);
+
         stateData.setMix("red_loop", "green_loop", 0.25F);
         stateData.setMix("red_loop", "blue_loop", 0.25F);
         stateData.setMix("red_loop", "purple_loop", 0.25F);
@@ -160,6 +181,12 @@ public class CharadeMonster extends AbstractSQMonster {
                 break;
         }
     }
+    
+    @Override
+    public void applyStartOfTurnPowers() {
+        super.applyStartOfTurnPowers();
+        addToBot(new ApplyPowerAction(this, this, new MonsterSpiritShieldPower(this, this.purpleDefendBuff)));
+    }
 
     @Override
     public void changeState(String stateName) {
@@ -178,12 +205,8 @@ public class CharadeMonster extends AbstractSQMonster {
 
     @Override
     public void damage(DamageInfo info) {
-        if (!this.isAwake) {
+        if (!this.isAwake && info.owner != null && info.type != DamageType.THORNS && info.output - currentBlock > 0) {
             addToBot(new ChangeStateAction(this, "AWAKE"));
-        } else if (info.owner != null && info.type != DamageType.THORNS && info.output - currentBlock > 0) {
-            AnimationState.TrackEntry e = state.setAnimation(0, "hit", false);
-            state.addAnimation(0, "idle", true, 0.0F);
-            e.setTimeScale(1.0f);
         }
 
         super.damage(info);
@@ -219,29 +242,34 @@ public class CharadeMonster extends AbstractSQMonster {
 
         switch (nextMove) {
             case 0: // IRONCLAD
-                addToBot(new GainBlockAction(this, 30));
+                addToBot(new GainBlockAction(this, calcAscensionTankiness(redBlockAmount)));
                 AbstractCard burn = new Burn();
-                burn.upgrade();
+                if (this.redDebuffUpgraded) {
+                    burn.upgrade();
+                }
                 addToBot(new MakeTempCardInDiscardAction(burn, redDebuffAmount));
                 break;
             case 1: // SILENT
                 for (int i = 0; i < this.greenAttackAmount; i++ ) {
                     addToBot(new DamageAction(Wiz.p(), info, AttackEffect.SLASH_HORIZONTAL));
                 }
-
-                addToBot(new ApplyPowerAction(Wiz.p(), this, new StrengthPower(Wiz.p(), -1 * this.greenDebuffAmount)));
                 addToBot(new ApplyPowerAction(Wiz.p(), this, new WeakPower(Wiz.p(), this.greenDebuffAmount, true)));
                 break;
             case 2: // DEFECT
-                addToBot(new DamageAction(Wiz.p(), info));
-                addToBot(new ApplyPowerAction(Wiz.p(), this, new ArtifactPower(this, blueBuffAmount)));
+                if (AbstractDungeon.ascensionLevel >= 18) {
+                    addToBot(new DamageAction(Wiz.p(), info));
+                    addToBot(new DamageAction(Wiz.p(), info));
+                } else {
+                    addToBot(new DamageAction(Wiz.p(), info));
+                }
+                addToBot(new ApplyPowerAction(this, this, new BufferPower(this, blueBuffAmount)));
                 break;
             case 3: // WATCHER
-                addToBot(new ApplyPowerAction(this, this, new PlatedArmorPower(this, purpleDefendBuff)));
-                addToBot(new ApplyPowerAction(this, this, new StrengthPower(Wiz.p(), this.purpleAttackBuff)));
+                addToBot(new ApplyPowerAction(this, this, new StrengthPower(this, this.purpleAttackBuff)));
                 break;
             case 4: // WAKE UP
                 if (!this.isAwake) {
+                    addToBot(new WaitAction(1.0f));
                     addToBot(new ChangeStateAction(this, "AWAKE"));
                 }
             }

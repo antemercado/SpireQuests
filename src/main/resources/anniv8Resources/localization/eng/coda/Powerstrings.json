@@ -5,5 +5,12 @@
       "This enemies next Attack deals #b",
       " additional damage."
     ]
+  },
+  "${ModID}:MonsterSpiritShieldPower": {
+    "NAME": "Spirit Shield",
+    "DESCRIPTIONS": [
+      "Whenever you play a card, this enemy gains #b",
+      " block next turn."
+    ]
   }
 }
