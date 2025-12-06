@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Random;
 
 import com.esotericsoftware.spine.AnimationState;
+import com.esotericsoftware.spine.AnimationState.TrackEntry;
 import com.megacrit.cardcrawl.actions.AbstractGameAction.AttackEffect;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
 import com.megacrit.cardcrawl.actions.common.ChangeStateAction;
@@ -136,29 +137,42 @@ public class CharadeMonster extends AbstractSQMonster {
         setHp(calcAscensionTankiness(HP_MIN), calcAscensionTankiness(HP_MAX));
         
         this.loadAnimation(makeContributionPath("coda", "charadeOrb/skeleton.atlas"), makeContributionPath("coda", "charadeOrb/skeleton.json"), 1.0F);
+        
+        /**  Track Info
+        0 - Base anims
+        1 - Fall Translation
+        2 - Fall Rotation
+        4 - Color loops
+        */
+
         AnimationState.TrackEntry e1 = this.state.setAnimation(0, "asleep", true);
-        AnimationState.TrackEntry e2 = this.state.setAnimation(1, "color_loop", true);
+        AnimationState.TrackEntry e2 = this.state.setAnimation(4, "color_loop", true);
+
         e1.setTimeScale(1.0F);
         e2.setTimeScale(1.0F);
-        stateData.setMix("hit", "idle", 0.3F);
-        stateData.setMix("attack", "idle", 0.25F);
-        stateData.setMix("idle", "hit", 0.1F);
-        stateData.setMix("idle", "attack", 0.1F);
-        stateData.setMix("wake", "asleep", 0.3F);
-        stateData.setMix("idle", "wake", 1.0F);
 
-        stateData.setMix("red_loop", "green_loop", 0.25F);
-        stateData.setMix("red_loop", "blue_loop", 0.25F);
-        stateData.setMix("red_loop", "purple_loop", 0.25F);
-        stateData.setMix("green_loop", "red_loop", 0.25F);
-        stateData.setMix("green_loop", "blue_loop", 0.25F);
-        stateData.setMix("green_loop", "purple_loop", 0.25F);
-        stateData.setMix("blue_loop", "red_loop", 0.25F);
-        stateData.setMix("blue_loop", "green_loop", 0.25F);
-        stateData.setMix("blue_loop", "purple_loop", 0.25F);
-        stateData.setMix("purple_loop", "red_loop", 0.25F);
-        stateData.setMix("purple_loop", "green_loop", 0.25F);
-        stateData.setMix("purple_loop", "blue_loop", 0.25F);
+        stateData.setMix("asleep", "idle", 0.25F);
+        stateData.setMix("idle", "attack", 0.4F);
+        stateData.setMix("attack", "idle", 0.4F);
+        stateData.setMix("idle", "hit", 0.2F);
+        stateData.setMix("hit", "idle", 0.2F);
+        stateData.setMix("hit", "attack", 0.4F);
+        stateData.setMix("attack", "hit", 0.4F);
+
+        stateData.setMix("hit", "idle", 0.2F);
+
+        stateData.setMix("red_loop", "green_loop", 0.4F);
+        stateData.setMix("red_loop", "blue_loop", 0.4F);
+        stateData.setMix("red_loop", "purple_loop", 0.4F);
+        stateData.setMix("green_loop", "red_loop", 0.4F);
+        stateData.setMix("green_loop", "blue_loop", 0.4F);
+        stateData.setMix("green_loop", "purple_loop", 0.4F);
+        stateData.setMix("blue_loop", "red_loop", 0.4F);
+        stateData.setMix("blue_loop", "green_loop", 0.4F);
+        stateData.setMix("blue_loop", "purple_loop", 0.4F);
+        stateData.setMix("purple_loop", "red_loop", 0.4F);
+        stateData.setMix("purple_loop", "green_loop", 0.4F);
+        stateData.setMix("purple_loop", "blue_loop", 0.4F);
     }
 
     @Override
@@ -199,8 +213,9 @@ public class CharadeMonster extends AbstractSQMonster {
         switch (stateName) {
             case "AWAKE":
                 this.isAwake = true;
-                state.setAnimation(0, "wake", false);
-                state.addAnimation(0, "idle", true, 0.0F);
+                state.setAnimation(0, "idle", true);
+                state.setAnimation(1, "wake2", false);
+                state.setAnimation(2, "fall_swing", false);
                 break;
             case "ATTACK":
                 state.setAnimation(0, "attack", false);
@@ -211,8 +226,13 @@ public class CharadeMonster extends AbstractSQMonster {
 
     @Override
     public void damage(DamageInfo info) {
-        if (!this.isAwake && info.owner != null && info.type != DamageType.THORNS && info.output - currentBlock > 0) {
-            addToBot(new ChangeStateAction(this, "AWAKE"));
+        if (info.owner != null && info.type != DamageType.THORNS && info.output - currentBlock > 0) {
+            if (!this.isAwake) {
+                addToBot(new ChangeStateAction(this, "AWAKE"));
+            } else {
+                state.setAnimation(0, "hit", false);
+                state.addAnimation(0, "idle", true, 0.0F);
+            }
         }
 
         super.damage(info);
@@ -222,19 +242,19 @@ public class CharadeMonster extends AbstractSQMonster {
         AnimationState.TrackEntry e;
         switch (color) {
             case RED:
-                e = state.setAnimation(1, "red_loop", true);
+                e = state.addAnimation(4, "red_loop", true, 2.0F);
                 break;
             case GREEN:
-                e = state.setAnimation(1, "green_loop", true);
+                e = state.addAnimation(4, "green_loop", true, 2.0F);
                 break;
             case BLUE:
-                e = state.setAnimation(1, "blue_loop", true);
+                e = state.addAnimation(4, "blue_loop", true, 2.0F);
                 break;
             case PURPLE:
-                e = state.setAnimation(1, "purple_loop", true);
+                e = state.addAnimation(4, "purple_loop", true, 2.0F);
                 break;
             default:
-                e = state.setAnimation(1, "color_loop", true);
+                e = state.addAnimation(4, "color_loop", true, 2.0F);
                 break;
         }
         e.setTimeScale(1.0F);
@@ -249,6 +269,7 @@ public class CharadeMonster extends AbstractSQMonster {
         switch (nextMove) {
             case 0: // IRONCLAD
                 addToBot(new GainBlockAction(this, calcAscensionTankiness(redBlockAmount)));
+                addToBot(new ChangeStateAction(this, "ATTACK"));
                 AbstractCard burn = new Burn();
                 if (this.redDebuffUpgraded) {
                     burn.upgrade();
@@ -256,12 +277,14 @@ public class CharadeMonster extends AbstractSQMonster {
                 addToBot(new MakeTempCardInDiscardAction(burn, redDebuffAmount));
                 break;
             case 1: // SILENT
+                addToBot(new ChangeStateAction(this, "ATTACK"));
                 for (int i = 0; i < this.greenAttackAmount; i++ ) {
                     addToBot(new DamageAction(Wiz.p(), info, AttackEffect.SLASH_HORIZONTAL));
                 }
                 addToBot(new ApplyPowerAction(Wiz.p(), this, new WeakPower(Wiz.p(), this.greenDebuffAmount, true)));
                 break;
             case 2: // DEFECT
+                addToBot(new ChangeStateAction(this, "ATTACK"));
                 if (AbstractDungeon.ascensionLevel >= 18) {
                     addToBot(new DamageAction(Wiz.p(), info));
                     addToBot(new DamageAction(Wiz.p(), info));

@@ -23,7 +23,7 @@ public class MonsterSpiritShieldPower extends AbstractSQPower implements Cloneab
     private static final String[] DESCRIPTIONS = powerStrings.DESCRIPTIONS;
 
     public MonsterSpiritShieldPower(AbstractCreature owner, int amount) {
-        super(ID, NAME, PowerType.BUFF, true, owner, amount);
+        super(ID, NAME, "coda", PowerType.BUFF, true, owner, amount);
         updateDescription();
     }
 
