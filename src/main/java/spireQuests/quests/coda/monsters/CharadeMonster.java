@@ -80,8 +80,19 @@ public class CharadeMonster extends AbstractSQMonster {
 
         this.isAwake = false;
 
-        validColors = new ArrayList(Arrays.asList(OrbColor.values()));
-        Collections.shuffle(validColors, new Random(AbstractDungeon.aiRng.randomLong()));
+        ArrayList<OrbColor> attackColors = new ArrayList();
+        ArrayList<OrbColor> defendColors = new ArrayList();
+        attackColors.add(OrbColor.GREEN);
+        attackColors.add(OrbColor.BLUE);
+        Collections.shuffle(attackColors, new Random(AbstractDungeon.aiRng.randomLong()));
+        defendColors.add(OrbColor.RED);
+        defendColors.add(OrbColor.PURPLE);
+        Collections.shuffle(defendColors, new Random(AbstractDungeon.aiRng.randomLong()));
+        validColors = new ArrayList();
+        validColors.add(attackColors.get(0));
+        validColors.add(defendColors.get(0));
+        validColors.add(attackColors.get(1));
+        validColors.add(defendColors.get(1));
 
         this.turnsTaken = 0;
 
@@ -134,7 +145,7 @@ public class CharadeMonster extends AbstractSQMonster {
         stateData.setMix("idle", "hit", 0.1F);
         stateData.setMix("idle", "attack", 0.1F);
         stateData.setMix("wake", "asleep", 0.3F);
-        stateData.setMix("idle", "wake", 0.3F);
+        stateData.setMix("idle", "wake", 1.0F);
 
         stateData.setMix("red_loop", "green_loop", 0.25F);
         stateData.setMix("red_loop", "blue_loop", 0.25F);
@@ -177,15 +188,10 @@ public class CharadeMonster extends AbstractSQMonster {
                 setMoveShortcut(DEFECT);
                 break;
             case PURPLE:
+                addToBot(new ApplyPowerAction(this, this, new MonsterSpiritShieldPower(this, this.purpleDefendBuff)));
                 setMoveShortcut(WATCHER);
                 break;
         }
-    }
-    
-    @Override
-    public void applyStartOfTurnPowers() {
-        super.applyStartOfTurnPowers();
-        addToBot(new ApplyPowerAction(this, this, new MonsterSpiritShieldPower(this, this.purpleDefendBuff)));
     }
 
     @Override
@@ -262,7 +268,7 @@ public class CharadeMonster extends AbstractSQMonster {
                 } else {
                     addToBot(new DamageAction(Wiz.p(), info));
                 }
-                addToBot(new ApplyPowerAction(this, this, new BufferPower(this, blueBuffAmount)));
+                addToBot(new ApplyPowerAction(this, this, new ArtifactPower(this, blueBuffAmount)));
                 break;
             case 3: // WATCHER
                 addToBot(new ApplyPowerAction(this, this, new StrengthPower(this, this.purpleAttackBuff)));

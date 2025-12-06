@@ -38,8 +38,9 @@ public class MonsterSpiritShieldPower extends AbstractSQPower implements Cloneab
         addToBot(new ApplyPowerAction(owner, owner, new NextTurnBlockPower(owner, this.amount)));
     }
     
+    
     @Override
-    public void atEndOfTurn(boolean isPlayer) {
+    public void atStartOfTurn() {
         flash();
         addToBot(new RemoveSpecificPowerAction(owner, owner, this));
     }
