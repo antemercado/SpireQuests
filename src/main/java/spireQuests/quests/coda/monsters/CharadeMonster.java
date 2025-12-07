@@ -4,12 +4,10 @@ import static spireQuests.Anniv8Mod.makeContributionPath;
 import static spireQuests.Anniv8Mod.makeID;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
 import com.esotericsoftware.spine.AnimationState;
-import com.esotericsoftware.spine.AnimationState.TrackEntry;
 import com.megacrit.cardcrawl.actions.AbstractGameAction.AttackEffect;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
 import com.megacrit.cardcrawl.actions.common.ChangeStateAction;
@@ -26,8 +24,6 @@ import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.localization.MonsterStrings;
 import com.megacrit.cardcrawl.powers.ArtifactPower;
-import com.megacrit.cardcrawl.powers.BufferPower;
-import com.megacrit.cardcrawl.powers.PlatedArmorPower;
 import com.megacrit.cardcrawl.powers.StrengthPower;
 import com.megacrit.cardcrawl.powers.WeakPower;
 
@@ -39,7 +35,6 @@ public class CharadeMonster extends AbstractSQMonster {
     public static final String ID = makeID(CharadeMonster.class.getSimpleName());
     private static final MonsterStrings monsterStrings = CardCrawlGame.languagePack.getMonsterStrings(ID);
     private static final String NAME = monsterStrings.NAME;
-    private static final String[] MOVES = monsterStrings.MOVES;
 
     private static final int HP_MIN = 300;
     private static final int HP_MAX = 325;
@@ -74,8 +69,7 @@ public class CharadeMonster extends AbstractSQMonster {
     }
 
     public CharadeMonster(float x, float y) {
-        super(NAME, ID, 225, -4f, -16f, HB_W, HB_H, null, x, y);
-        this.hb_y = -75.0F;
+        super(NAME, ID, 225, 0.0F, -75.0F, HB_W, HB_H, null, x, y);
  
         type = EnemyType.ELITE;
 
@@ -100,7 +94,7 @@ public class CharadeMonster extends AbstractSQMonster {
         this.redBlockAmount = 20;
         this.redDebuffAmount = 2;
         
-        this.greenAttackAmount = 4;
+        this.greenAttackAmount = 7;
         this.greenDebuffAmount = 2;
         
         this.blueDamageAmount = 28;
@@ -112,7 +106,7 @@ public class CharadeMonster extends AbstractSQMonster {
         if (AbstractDungeon.ascensionLevel >= 3) {
             this.blueDamageAmount = 32;
 
-            this.greenAttackAmount = 5;
+            this.greenAttackAmount = 8;
         }
         if (AbstractDungeon.ascensionLevel >= 8) {
             this.purpleDefendBuff = 6;
@@ -125,7 +119,7 @@ public class CharadeMonster extends AbstractSQMonster {
         }
 
         addMove(IRONCLAD, Intent.DEFEND_DEBUFF);
-        addMove(SILENT, Intent.ATTACK_DEBUFF, 7, greenAttackAmount, true);
+        addMove(SILENT, Intent.ATTACK_DEBUFF, 4, greenAttackAmount, true);
         if (AbstractDungeon.ascensionLevel >= 18) {
             addMove(DEFECT, Intent.ATTACK_BUFF, calcAscensionDamage(blueDamageAmount), 2, true);
         } else {
@@ -216,6 +210,7 @@ public class CharadeMonster extends AbstractSQMonster {
                 state.setAnimation(0, "idle", true);
                 state.setAnimation(1, "wake2", false);
                 state.setAnimation(2, "fall_swing", false);
+                // updateHitbox(hb_x, -150.0F, HB_W, HB_H);
                 break;
             case "ATTACK":
                 state.setAnimation(0, "attack", false);
