@@ -12,26 +12,38 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.spine.AnimationState;
 import com.megacrit.cardcrawl.actions.AbstractGameAction.AttackEffect;
+import com.megacrit.cardcrawl.actions.animations.VFXAction;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
 import com.megacrit.cardcrawl.actions.common.ChangeStateAction;
 import com.megacrit.cardcrawl.actions.common.DamageAction;
 import com.megacrit.cardcrawl.actions.common.GainBlockAction;
 import com.megacrit.cardcrawl.actions.common.MakeTempCardInDiscardAction;
 import com.megacrit.cardcrawl.actions.common.RollMoveAction;
+import com.megacrit.cardcrawl.actions.utility.SFXAction;
+import com.megacrit.cardcrawl.actions.utility.ShakeScreenAction;
 import com.megacrit.cardcrawl.actions.utility.WaitAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.cards.DamageInfo.DamageType;
 import com.megacrit.cardcrawl.cards.status.Burn;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
+import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.helpers.ScreenShake.ShakeDur;
+import com.megacrit.cardcrawl.helpers.ScreenShake.ShakeIntensity;
 import com.megacrit.cardcrawl.localization.MonsterStrings;
 import com.megacrit.cardcrawl.powers.ArtifactPower;
 import com.megacrit.cardcrawl.powers.StrengthPower;
 import com.megacrit.cardcrawl.powers.WeakPower;
+import com.megacrit.cardcrawl.vfx.AbstractGameEffect;
+import com.megacrit.cardcrawl.vfx.combat.LaserBeamEffect;
+import com.megacrit.cardcrawl.vfx.combat.MindblastEffect;
+import com.megacrit.cardcrawl.vfx.combat.ScreenOnFireEffect;
 
 import spireQuests.abstracts.AbstractSQMonster;
+import spireQuests.actions.WaitMoreAction;
 import spireQuests.quests.coda.powers.MonsterSpiritShieldPower;
+import spireQuests.quests.coda.vfx.ScreenBurnEffect;
 import spireQuests.util.Wiz;
 public class CharadeMonster extends AbstractSQMonster {
 
@@ -77,7 +89,8 @@ public class CharadeMonster extends AbstractSQMonster {
     }
 
     public CharadeMonster(float x, float y) {
-        super(NAME, ID, 225, 0.0F, 125.0F, HB_W, HB_H, null, x, y);
+        super(NAME, ID, 300, 0.0F, 125.0F, HB_W, HB_H, null, x, y);
+        setHp(calcAscensionTankiness(HP_MIN), calcAscensionTankiness(HP_MAX));
         
         type = EnemyType.ELITE;
 
@@ -126,8 +139,6 @@ public class CharadeMonster extends AbstractSQMonster {
         }
         addMove(WATCHER, Intent.DEFEND_BUFF);
         addMove(WAKEUP, Intent.UNKNOWN);
-
-        setHp(calcAscensionTankiness(HP_MIN), calcAscensionTankiness(HP_MAX));
         
         this.loadAnimation(makeContributionPath("coda", "charadeOrb/skeleton.atlas"), makeContributionPath("coda", "charadeOrb/skeleton.json"), 1.0F);
         
@@ -151,6 +162,9 @@ public class CharadeMonster extends AbstractSQMonster {
         stateData.setMix("hit", "idle", 0.2F);
         stateData.setMix("hit", "attack", 0.4F);
         stateData.setMix("attack", "hit", 0.4F);
+        stateData.setMix("idle", "attack_long", 0.4F);
+        stateData.setMix("attack_long", "idle", 0.4F);
+        stateData.setMix("attack_long", "hit", 0.4F);
 
         stateData.setMix("hit", "idle", 0.2F);
 
@@ -217,6 +231,10 @@ public class CharadeMonster extends AbstractSQMonster {
                 state.setAnimation(0, "attack", false);
                 state.addAnimation(0, "idle", true, 0.0F);
                 break;
+            case "ATTACK_LONG":
+                state.setAnimation(0, "attack_long", false);
+                state.addAnimation(0, "idle", true, 0.0F);
+                break;
         }
     }
         
@@ -279,8 +297,11 @@ public class CharadeMonster extends AbstractSQMonster {
 
         switch (nextMove) {
             case 0: // IRONCLAD
-                addToBot(new GainBlockAction(this, calcAscensionTankiness(redBlockAmount)));
                 addToBot(new ChangeStateAction(this, "ATTACK"));
+                AbstractGameEffect burnVFX = new ScreenOnFireEffect();
+                burnVFX.duration = burnVFX.startingDuration = 1.0F;
+                addToBot(new VFXAction(burnVFX));
+                addToBot(new GainBlockAction(this, calcAscensionDamage(redBlockAmount)));
                 AbstractCard burn = new Burn();
                 if (this.redDebuffUpgraded) {
                     burn.upgrade();
@@ -289,17 +310,22 @@ public class CharadeMonster extends AbstractSQMonster {
                 break;
             case 1: // SILENT
                 addToBot(new ChangeStateAction(this, "ATTACK"));
+                addToBot(new ShakeScreenAction(0.0F, ShakeDur.SHORT, ShakeIntensity.MED));
                 for (int i = 0; i < this.greenAttackAmount; i++ ) {
-                    addToBot(new DamageAction(Wiz.p(), info, AttackEffect.SLASH_HORIZONTAL));
+                    addToBot(new DamageAction(Wiz.p(), info, Wiz.getRandomSlash()));
                 }
                 addToBot(new ApplyPowerAction(Wiz.p(), this, new WeakPower(Wiz.p(), this.greenDebuffAmount, true)));
                 break;
             case 2: // DEFECT
-                addToBot(new ChangeStateAction(this, "ATTACK"));
+                addToBot(new ChangeStateAction(this, "ATTACK_LONG"));
                 if (AbstractDungeon.ascensionLevel >= 18) {
+                    addToBot(new VFXAction(this, new LaserBeamEffect(this.hb.cX - 262.0F * Settings.scale, this.hb.cY + 269.0F * Settings.scale), 0.5F));
                     addToBot(new DamageAction(Wiz.p(), info));
+                    addToBot(new SFXAction("ATTACK_MAGIC_BEAM"));
+                    addToBot(new WaitMoreAction(0.5F));
                     addToBot(new DamageAction(Wiz.p(), info));
                 } else {
+                    addToBot(new VFXAction(this, new LaserBeamEffect(this.hb.cX - 262.0F * Settings.scale, this.hb.cY + 269.0F * Settings.scale), 0.5F));
                     addToBot(new DamageAction(Wiz.p(), info));
                 }
                 addToBot(new ApplyPowerAction(this, this, new ArtifactPower(this, blueBuffAmount)));
