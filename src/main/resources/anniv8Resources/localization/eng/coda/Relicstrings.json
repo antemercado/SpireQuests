@@ -12,5 +12,21 @@
     "DESCRIPTIONS": [
       "Upon pickup, raise your Max HP by #b20%."
     ]
+  },
+  "${ModID}:CharadeOrbRelic": {
+    "NAME": "Chromatic Cell",
+    "FLAVOR": "The cell's power whispers four voices, but never in harmony.",
+    "DESCRIPTIONS": [
+      "At the end of each turn, the relic will cycle to a new state. Each state #rdeals #rdamage, #gdraws #gand #gdiscards #gcards, #bgains #bblock, or #pscrys at the start of each turn depending on its color.",
+      "At the start of this turn, deal 5 damage to ALL enemies.",
+      "At the start of this turn, draw a card, then discard a card.",
+      "At the start of this turn, gain 5 block.",
+      "At the start of this turn, scry 1.",
+      "The next color will be %s",
+      "#rRED.",
+      "#gGREEN.",
+      "#bBLUE.",
+      "#pPURPLE."
+    ]
   }
 }

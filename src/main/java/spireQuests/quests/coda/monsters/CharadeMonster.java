@@ -43,15 +43,17 @@ public class CharadeMonster extends AbstractSQMonster {
 
     private static final Byte IRONCLAD = 0, SILENT = 1, DEFECT = 2, WATCHER = 3, WAKEUP = 4;
 
-    private enum OrbColor {
+    public static enum OrbColor {
+        NONE,
         RED,
         GREEN,
         BLUE,
         PURPLE
     }
 
+    
     private OrbColor currColor;
-    private ArrayList<OrbColor> validColors = new ArrayList<>();
+    public ArrayList<OrbColor> moveOrder;
     private int greenAttackAmount;
     private int redDebuffAmount;
     private int purpleDefendBuff;
@@ -70,37 +72,24 @@ public class CharadeMonster extends AbstractSQMonster {
 
     public CharadeMonster(float x, float y) {
         super(NAME, ID, 225, 0.0F, -75.0F, HB_W, HB_H, null, x, y);
- 
+        
         type = EnemyType.ELITE;
 
         this.isAwake = false;
 
-        ArrayList<OrbColor> attackColors = new ArrayList();
-        ArrayList<OrbColor> defendColors = new ArrayList();
-        attackColors.add(OrbColor.GREEN);
-        attackColors.add(OrbColor.BLUE);
-        Collections.shuffle(attackColors, new Random(AbstractDungeon.aiRng.randomLong()));
-        defendColors.add(OrbColor.RED);
-        defendColors.add(OrbColor.PURPLE);
-        Collections.shuffle(defendColors, new Random(AbstractDungeon.aiRng.randomLong()));
-        validColors = new ArrayList();
-        validColors.add(attackColors.get(0));
-        validColors.add(defendColors.get(0));
-        validColors.add(attackColors.get(1));
-        validColors.add(defendColors.get(1));
-
         this.turnsTaken = 0;
+        this.moveOrder = getMoveOrder();
 
-        this.redBlockAmount = 20;
-        this.redDebuffAmount = 2;
+        this.redBlockAmount = 30;
+        this.redDebuffAmount = 3;
         
         this.greenAttackAmount = 7;
         this.greenDebuffAmount = 2;
         
-        this.blueDamageAmount = 28;
+        this.blueDamageAmount = 30;
         this.blueBuffAmount = 1;
         
-        this.purpleDefendBuff = 4;
+        this.purpleDefendBuff = 5;
         this.purpleAttackBuff = 1;
         
         if (AbstractDungeon.ascensionLevel >= 3) {
@@ -109,13 +98,15 @@ public class CharadeMonster extends AbstractSQMonster {
             this.greenAttackAmount = 8;
         }
         if (AbstractDungeon.ascensionLevel >= 8) {
-            this.purpleDefendBuff = 6;
+            this.purpleDefendBuff = 7;
         }
         if (AbstractDungeon.ascensionLevel >= 18) {
             this.redDebuffUpgraded = true;
 
+            this.greenDebuffAmount = 3;
+
             this.blueBuffAmount = 2;
-            this.blueDamageAmount = 14;
+            this.blueDamageAmount = 15;
         }
 
         addMove(IRONCLAD, Intent.DEFEND_DEBUFF);
@@ -183,7 +174,7 @@ public class CharadeMonster extends AbstractSQMonster {
             this.firstMove = false;
             return;
         }
-        currColor = validColors.get(this.turnsTaken % validColors.size());
+        currColor = moveOrder.get(this.turnsTaken % moveOrder.size());
         changeColor(currColor);
         switch (currColor) {
             case RED:
@@ -198,6 +189,9 @@ public class CharadeMonster extends AbstractSQMonster {
             case PURPLE:
                 addToBot(new ApplyPowerAction(this, this, new MonsterSpiritShieldPower(this, this.purpleDefendBuff)));
                 setMoveShortcut(WATCHER);
+                break;
+            default:
+                setMoveShortcut(WAKEUP);
                 break;
         }
     }
@@ -299,6 +293,31 @@ public class CharadeMonster extends AbstractSQMonster {
             }
 
         addToBot(new RollMoveAction(this));
+    }
+
+    private ArrayList<OrbColor> getMoveOrder() {
+        ArrayList<OrbColor> ret = new ArrayList();
+        if (CardCrawlGame.isInARun()) {
+            ArrayList<OrbColor> attackColors = new ArrayList();
+            ArrayList<OrbColor> defendColors = new ArrayList();
+            attackColors.add(OrbColor.GREEN);
+            attackColors.add(OrbColor.BLUE);
+            Collections.shuffle(attackColors, new Random(AbstractDungeon.aiRng.randomLong()));
+            defendColors.add(OrbColor.RED);
+            defendColors.add(OrbColor.PURPLE);
+            Collections.shuffle(defendColors, new Random(AbstractDungeon.aiRng.randomLong()));
+            ret.add(attackColors.get(0));
+            ret.add(defendColors.get(0));
+            ret.add(attackColors.get(1));
+            ret.add(defendColors.get(1));
+            return ret;
+        }
+        ret.add(OrbColor.RED);
+        ret.add(OrbColor.GREEN);
+        ret.add(OrbColor.PURPLE);
+        ret.add(OrbColor.BLUE);
+        return ret;
+
     }
 
 }

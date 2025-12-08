@@ -2,6 +2,8 @@ package spireQuests.quests.coda;
 
 import static spireQuests.Anniv8Mod.makeID;
 
+import java.util.ArrayList;
+
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch2;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePrefixPatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpireReturn;
@@ -12,21 +14,28 @@ import spireQuests.Anniv8Mod;
 import spireQuests.patches.QuestTriggers;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
+import spireQuests.quests.QuestReward.RelicReward;
 import spireQuests.quests.coda.monsters.CharadeMonster;
+import spireQuests.quests.coda.monsters.CharadeMonster.OrbColor;
+import spireQuests.quests.coda.relics.CharadeOrbRelic;
 
 public class BountyCharadeQuest extends AbstractQuest {
 
     public static final Object ID = makeID(BountyCharadeQuest.class.getSimpleName());
+    public static ArrayList<OrbColor> orbOrder = null;
 
     public BountyCharadeQuest() {
         super(QuestType.SHORT, QuestDifficulty.HARD);
-        
+
         new TriggerTracker<>(QuestTriggers.VICTORY, 1)
             .triggerCondition((x) -> AbstractDungeon.getCurrRoom().eliteTrigger &&
                 CharadeMonster.ID.equals(AbstractDungeon.lastCombatMetricKey))
             .setFailureTrigger(QuestTriggers.ACT_CHANGE)
             .add(this);
+    
+        addReward(new RelicReward(new CharadeOrbRelic()));
     }
+    
 
     @Override
     public float getTitleScale() {
