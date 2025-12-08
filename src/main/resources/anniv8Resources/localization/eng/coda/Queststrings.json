@@ -32,9 +32,8 @@
   },
   "${ModID}:BountyCharadeQuest": {
     "TITLE": "Bounty: Charadlier",
-    "DESCRIPTION": "???",
+    "DESCRIPTION": "A maleficent amalgamation of energies descends the Spire. Cut it down and harness its powers. NL The next elite this act is replaced by the #yCharadlier.",
     "AUTHOR": "coda",
-    "REWARD": "???",
     "TRACKER_TEXT": [
       "Orb cut down"
     ]

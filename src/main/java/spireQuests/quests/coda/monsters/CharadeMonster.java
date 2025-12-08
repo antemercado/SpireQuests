@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.spine.AnimationState;
 import com.megacrit.cardcrawl.actions.AbstractGameAction.AttackEffect;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
@@ -42,6 +45,7 @@ public class CharadeMonster extends AbstractSQMonster {
     private static final float HB_H = 250.0F; //534
 
     private static final Byte IRONCLAD = 0, SILENT = 1, DEFECT = 2, WATCHER = 3, WAKEUP = 4;
+    private static final float DROP_DUR = 0.5F;
 
     public static enum OrbColor {
         NONE,
@@ -64,24 +68,28 @@ public class CharadeMonster extends AbstractSQMonster {
     private boolean isAwake;
     private int redBlockAmount;
     private int blueDamageAmount;
-    private boolean redDebuffUpgraded = false;
+    private boolean redDebuffUpgraded;
+    private boolean doneWaking;
+    private float dropTime = 0.0F;
     
     public CharadeMonster() {
         this(0, 200);
     }
 
     public CharadeMonster(float x, float y) {
-        super(NAME, ID, 225, 0.0F, -75.0F, HB_W, HB_H, null, x, y);
+        super(NAME, ID, 225, 0.0F, 125.0F, HB_W, HB_H, null, x, y);
         
         type = EnemyType.ELITE;
 
         this.isAwake = false;
+        this.doneWaking = false;
 
         this.turnsTaken = 0;
         this.moveOrder = getMoveOrder();
 
         this.redBlockAmount = 30;
         this.redDebuffAmount = 3;
+        this.redDebuffUpgraded = false;
         
         this.greenAttackAmount = 7;
         this.greenDebuffAmount = 2;
@@ -204,12 +212,26 @@ public class CharadeMonster extends AbstractSQMonster {
                 state.setAnimation(0, "idle", true);
                 state.setAnimation(1, "wake2", false);
                 state.setAnimation(2, "fall_swing", false);
-                // updateHitbox(hb_x, -150.0F, HB_W, HB_H);
                 break;
             case "ATTACK":
                 state.setAnimation(0, "attack", false);
                 state.addAnimation(0, "idle", true, 0.0F);
                 break;
+        }
+    }
+        
+        @Override
+        public void update() {
+            super.update();
+            if (this.isAwake && !this.doneWaking) {
+                this.dropTime += Gdx.graphics.getDeltaTime();
+                float dp = Interpolation.bounceOut.apply(this.dropTime / DROP_DUR);
+                float y = MathUtils.lerp(125, -75, dp);
+                updateHitbox(hb_x, y, HB_W, HB_H);
+
+                if (dp >= 1.0F) {
+                    this.doneWaking = true;
+                }
         }
     }
 
