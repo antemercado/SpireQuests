@@ -1,8 +1,10 @@
 package spireQuests.questStats.patches;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.tools.bmfont.BitmapFontWriter.Padding;
 import com.evacipated.cardcrawl.modthespire.lib.SpireEnum;
 import com.evacipated.cardcrawl.modthespire.lib.SpireOverride;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch2;
@@ -32,24 +34,31 @@ public class QuestStatsMenuPatch {
 
     @SpirePatch2(clz = MenuPanelScreen.class, method = "initializePanels")
     public static class InitStatsPanel {
+
+        private static final float PADDING = 200.0F * Settings.scale;
+
         public static void Postfix(MenuPanelScreen __instance, MenuPanelScreen.PanelScreen ___screen) {
             if (___screen == PanelScreen.STATS) {
-                __instance.panels.clear();
+                __instance.panels.add(new QuestStatsMainMenuPanel(Enums.QUEST_STATS, PanelColor.BEIGE, 0, 0));
+                ArrayList<MainMenuPanelButton> panels = __instance.panels;
 
-                float offset;
-                float y = (Settings.HEIGHT / 2.0F) + 50.0F * Settings.scale;
-                if (!DistributorFactory.isLeaderboardEnabled()) {
-                    offset = 450.0F;
-                    __instance.panels.add(new MainMenuPanelButton(PanelClickResult.STAT_CHAR, PanelColor.BLUE, Settings.WIDTH / 2.0F - offset * Settings.scale, y));
-                    __instance.panels.add(new MainMenuPanelButton(PanelClickResult.STAT_HISTORY, PanelColor.RED, Settings.WIDTH / 2.0F * Settings.scale, y));
-                    __instance.panels.add(new MainMenuPanelButton(Enums.QUEST_STATS, PanelColor.BEIGE, Settings.WIDTH / 2.0F + offset * Settings.scale, y));
-                } else {
-                    offset = 225.0F;
-                    __instance.panels.add(new MainMenuPanelButton(PanelClickResult.STAT_CHAR, PanelColor.BLUE, Settings.WIDTH / 2.0F - 3 * offset * Settings.scale, y));
-                    __instance.panels.add(new MainMenuPanelButton(PanelClickResult.STAT_HISTORY, PanelColor.RED, Settings.WIDTH / 2.0F - offset * Settings.scale, y));
-                    __instance.panels.add(new MainMenuPanelButton(PanelClickResult.STAT_LEADERBOARDS, PanelColor.BEIGE, Settings.WIDTH / 2.0F + offset * Settings.scale, y));
-                    __instance.panels.add(new QuestStatsMainMenuPanel(Enums.QUEST_STATS, PanelColor.BEIGE, Settings.WIDTH / 2.0F + 3 * offset * Settings.scale, y));
+                float yPos = (Settings.HEIGHT / 2.0F);
+                if (panels.size() > 3) {
+                    yPos += 50.0F * Settings.scale;
                 }
+
+                float units = (panels.size() % 2 == 0 ? PADDING / (panels.size() + 1) : PADDING / panels.size()) * Settings.scale;
+                units += 400.0F * Settings.scale;
+
+                for (int i = 0; i < panels.size(); i++) {
+                    MainMenuPanelButton p = panels.get(i);
+
+                    float xPos = Settings.WIDTH / 2.0F + ((i - ((panels.size() - 1) / 2.0F)) * units);
+
+                    p.hb.moveY(yPos);
+                    p.hb.moveX(xPos);
+                }
+
                 SpireReturn.Return();
             }
         }
