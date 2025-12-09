@@ -114,11 +114,12 @@ public class CharadeMonster extends AbstractSQMonster {
         this.purpleAttackBuff = 1;
         
         if (AbstractDungeon.ascensionLevel >= 3) {
-            this.blueDamageAmount = 32;
+            this.blueDamageAmount = 34;
 
             this.greenAttackAmount = 8;
         }
         if (AbstractDungeon.ascensionLevel >= 8) {
+            this.redBlockAmount = 35;
             this.purpleDefendBuff = 7;
         }
         if (AbstractDungeon.ascensionLevel >= 18) {
@@ -127,15 +128,15 @@ public class CharadeMonster extends AbstractSQMonster {
             this.greenDebuffAmount = 3;
 
             this.blueBuffAmount = 2;
-            this.blueDamageAmount = 15;
+            this.blueDamageAmount = 17;
         }
 
         addMove(IRONCLAD, Intent.DEFEND_DEBUFF);
         addMove(SILENT, Intent.ATTACK_DEBUFF, 4, greenAttackAmount, true);
         if (AbstractDungeon.ascensionLevel >= 18) {
-            addMove(DEFECT, Intent.ATTACK_BUFF, calcAscensionDamage(blueDamageAmount), 2, true);
+            addMove(DEFECT, Intent.ATTACK_BUFF, this.blueDamageAmount, 2, true);
         } else {
-            addMove(DEFECT, Intent.ATTACK_BUFF, calcAscensionDamage(blueDamageAmount));
+            addMove(DEFECT, Intent.ATTACK_BUFF, this.blueDamageAmount);
         }
         addMove(WATCHER, Intent.DEFEND_BUFF);
         addMove(WAKEUP, Intent.UNKNOWN);
@@ -301,7 +302,7 @@ public class CharadeMonster extends AbstractSQMonster {
                 AbstractGameEffect burnVFX = new ScreenOnFireEffect();
                 burnVFX.duration = burnVFX.startingDuration = 1.0F;
                 addToBot(new VFXAction(burnVFX));
-                addToBot(new GainBlockAction(this, calcAscensionDamage(redBlockAmount)));
+                addToBot(new GainBlockAction(this, this.redBlockAmount));
                 AbstractCard burn = new Burn();
                 if (this.redDebuffUpgraded) {
                     burn.upgrade();
