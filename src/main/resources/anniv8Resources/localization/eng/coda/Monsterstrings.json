@@ -1,11 +1,5 @@
 {
   "${ModID}:CharadeMonster": {
-    "MOVES": [
-      "Demon Form",
-      "Ironwave",
-      "Bash",
-      "Twin Strike"
-    ],
     "NAME": "Charadlier"
   }
 }
