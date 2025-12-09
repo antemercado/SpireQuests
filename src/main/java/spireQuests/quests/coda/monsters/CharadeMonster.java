@@ -11,7 +11,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.spine.AnimationState;
-import com.megacrit.cardcrawl.actions.AbstractGameAction.AttackEffect;
 import com.megacrit.cardcrawl.actions.animations.VFXAction;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
 import com.megacrit.cardcrawl.actions.common.ChangeStateAction;
@@ -37,13 +36,11 @@ import com.megacrit.cardcrawl.powers.StrengthPower;
 import com.megacrit.cardcrawl.powers.WeakPower;
 import com.megacrit.cardcrawl.vfx.AbstractGameEffect;
 import com.megacrit.cardcrawl.vfx.combat.LaserBeamEffect;
-import com.megacrit.cardcrawl.vfx.combat.MindblastEffect;
 import com.megacrit.cardcrawl.vfx.combat.ScreenOnFireEffect;
 
 import spireQuests.abstracts.AbstractSQMonster;
 import spireQuests.actions.WaitMoreAction;
 import spireQuests.quests.coda.powers.MonsterSpiritShieldPower;
-import spireQuests.quests.coda.vfx.ScreenBurnEffect;
 import spireQuests.util.Wiz;
 public class CharadeMonster extends AbstractSQMonster {
 

@@ -25,7 +25,7 @@ import spireQuests.abstracts.AbstractSQRelic;
 import spireQuests.quests.coda.monsters.CharadeMonster.OrbColor;
 import spireQuests.util.TexLoader;
 
-public class CharadeOrbRelic extends AbstractSQRelic implements CustomSavable<List<String>> {
+public class CharadeOrbRelic extends AbstractSQRelic {
 
     private static final Texture BASE_TEXTURE = TexLoader.getTexture(makeContributionPath("coda", "CharadeOrbRelic.png"));
     private static final Texture RED_TEXTURE = TexLoader.getTexture(makeContributionPath("coda", "CharadeOrbRelic_red.png"));
@@ -156,16 +156,6 @@ public class CharadeOrbRelic extends AbstractSQRelic implements CustomSavable<Li
         int i = counter + 1;
         i = i % this.stateOrder.size();
         return i;
-    }
-
-    @Override
-    public void onLoad(List<String> list) {
-        this.stateOrder = list.stream().map((s) -> OrbColor.valueOf(s)).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<String> onSave() {
-        return this.stateOrder.stream().map((e) -> e.toString()).collect(Collectors.toList());
     }
 
 }
