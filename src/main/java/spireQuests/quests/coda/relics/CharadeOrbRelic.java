@@ -80,6 +80,11 @@ public class CharadeOrbRelic extends AbstractSQRelic {
     }
 
     @Override
+    public void onEquip() {
+        updateState();
+    }
+
+    @Override
     public void renderCounter(SpriteBatch sb, boolean inTopPanel) {}
 
     private void updateState() {
