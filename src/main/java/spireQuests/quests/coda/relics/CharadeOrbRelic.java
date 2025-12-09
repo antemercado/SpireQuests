@@ -40,15 +40,25 @@ public class CharadeOrbRelic extends AbstractSQRelic {
     public CharadeOrbRelic() {
         super(ID, "coda", RelicTier.SPECIAL, LandingSound.MAGICAL);
         this.state = OrbColor.NONE;
-        this.counter = 0;
+        this.counter = -1;
         this.stateOrder.add(OrbColor.RED);
         this.stateOrder.add(OrbColor.GREEN);
         this.stateOrder.add(OrbColor.BLUE);
         this.stateOrder.add(OrbColor.PURPLE);
     }
-
+    
+    @Override
+    public void update() {
+        super.update();
+        if (this.counter >= 0 && this.state.equals(OrbColor.NONE)) {
+            this.counter--;
+            updateState();
+        }
+    }
+    
     @Override
     public void atTurnStart() {
+        updateState();
         if (this.state.equals(OrbColor.PURPLE)) {
             flash();
             addToBot(new RelicAboveCreatureAction(AbstractDungeon.player, this));
@@ -75,11 +85,6 @@ public class CharadeOrbRelic extends AbstractSQRelic {
     }
 
     @Override
-    public void onPlayerEndTurn() {
-        updateState();
-    }
-
-    @Override
     public void onEquip() {
         updateState();
     }
@@ -88,8 +93,8 @@ public class CharadeOrbRelic extends AbstractSQRelic {
     public void renderCounter(SpriteBatch sb, boolean inTopPanel) {}
 
     private void updateState() {
+        this.counter = (this.counter + 1) % this.stateOrder.size();
         this.state = stateOrder.get(this.counter);
-        this.counter = getNextCounter(this.counter);
         switch (this.state) {
             case RED:
                 this.img = RED_TEXTURE;
@@ -153,12 +158,6 @@ public class CharadeOrbRelic extends AbstractSQRelic {
             strbuild.append(String.format(DESCRIPTIONS[5], s));
         }
         return strbuild.toString();
-    }
-
-    private int getNextCounter(int counter) {
-        int i = counter + 1;
-        i = i % this.stateOrder.size();
-        return i;
     }
 
 }
