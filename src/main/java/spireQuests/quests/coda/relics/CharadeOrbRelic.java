@@ -5,7 +5,6 @@ import static spireQuests.Anniv8Mod.makeID;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,7 +19,6 @@ import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.PowerTip;
 
-import basemod.abstracts.CustomSavable;
 import spireQuests.abstracts.AbstractSQRelic;
 import spireQuests.quests.coda.monsters.CharadeMonster.OrbColor;
 import spireQuests.util.TexLoader;
