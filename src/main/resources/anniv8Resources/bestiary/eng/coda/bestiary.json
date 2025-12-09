@@ -6,8 +6,8 @@
             "ai": [
                 {
                     "min_asc": 0,
-                    "desc": "Once awake, it cycles through four color modes: #rRed (Defense), #gGreen (Offense), #bBlue (Offense), and #pPurple (Defense). This sequence repeats in a fixed order. The order is chosen randomly at the start of combat, but it always alternates between Offensive and Defensive colors, and does not change after that.",
-                    "notes": "Innate #bBlock #b100. Wakes up after the first turn or from losing hp.",
+                    "desc": "Once awake, it cycles through four color modes: #wRed (Defense), #wGreen (Offense), #wBlue (Offense), and #wPurple (Defense). NL This sequence repeats in a fixed order. The order is chosen randomly at the start of combat, but it always alternates between Offensive and Defensive colors, and does not change after that.",
+                    "notes": "Innate #bBlock #b100. NL Wakes up after the first turn or from losing hp. NL #uSpirit #uShield buff gives #uNext #uTurn #uBlock on card play.",
                     "hp": "(300 - 325 HP)",
                     "moves": [
                         {
@@ -66,8 +66,8 @@
                 },
                 {
                     "min_asc": 3,
-                    "desc": "Once awake, it cycles through four color modes: #rRed (Defense), #gGreen (Offense), #bBlue (Offense), and #pPurple (Defense). This sequence repeats in a fixed order. The order is chosen randomly at the start of combat, but it always alternates between Offensive and Defensive colors, and does not change after that.",
-                    "notes": "Innate #bBlock #b100. Wakes up after the first turn or from losing hp.",
+                    "desc": "Once awake, it cycles through four color modes: #wRed (Defense), #wGreen (Offense), #wBlue (Offense), and #wPurple (Defense). NL This sequence repeats in a fixed order. The order is chosen randomly at the start of combat, but it always alternates between Offensive and Defensive colors, and does not change after that.",
+                    "notes": "Innate #bBlock #b100. NL Wakes up after the first turn or from losing hp. NL #uSpirit #uShield buff gives #uNext #uTurn #uBlock on card play.",
                     "hp": "(300 - 325 HP)",
                     "moves": [
                         {
@@ -126,8 +126,8 @@
                 },
                 {
                     "min_asc": 8,
-                    "desc": "Once awake, it cycles through four color modes: #rRed (Defense), #gGreen (Offense), #bBlue (Offense), and #pPurple (Defense). This sequence repeats in a fixed order. The order is chosen randomly at the start of combat, but it always alternates between Offensive and Defensive colors, and does not change after that.",
-                    "notes": "Innate #bBlock #b100. Wakes up after the first turn or from losing hp.",
+                    "desc": "Once awake, it cycles through four color modes: #wRed (Defense), #wGreen (Offense), #wBlue (Offense), and #wPurple (Defense). NL This sequence repeats in a fixed order. The order is chosen randomly at the start of combat, but it always alternates between Offensive and Defensive colors, and does not change after that.",
+                    "notes": "Innate #bBlock #b100. NL Wakes up after the first turn or from losing hp. NL #uSpirit #uShield buff gives #uNext #uTurn #uBlock on card play.",
                     "hp": "(330 - 357 HP)",
                     "moves": [
                         {
@@ -186,8 +186,8 @@
                 },
                 {
                     "min_asc": 18,
-                    "desc": "Once awake, it cycles through four color modes: #rRed (Defense), #gGreen (Offense), #bBlue (Offense), and #pPurple (Defense). This sequence repeats in a fixed order. The order is chosen randomly at the start of combat, but it always alternates between Offensive and Defensive colors, and does not change after that.",
-                    "notes": "Innate #bBlock #b100. Wakes up after the first turn or from losing hp.",
+                    "desc": "Once awake, it cycles through four color modes: #wRed (Defense), #wGreen (Offense), #wBlue (Offense), and #wPurple (Defense). NL This sequence repeats in a fixed order. The order is chosen randomly at the start of combat, but it always alternates between Offensive and Defensive colors, and does not change after that.",
+                    "notes": "Innate #bBlock #b100. NL Wakes up after the first turn or from losing hp. NL #uSpirit #uShield buff gives #uNext #uTurn #uBlock on card play.",
                     "hp": "(330 - 357 HP)",
                     "moves": [
                         {
@@ -224,7 +224,7 @@
                                     "color": "DAMAGE"
                                 },
                                 {
-                                    "name": "Artifact 1",
+                                    "name": "Artifact 2",
                                     "color": "BUFF"
                                 }
                             ]
