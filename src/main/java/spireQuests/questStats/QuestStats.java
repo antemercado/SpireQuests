@@ -118,7 +118,7 @@ public class QuestStats {
 
         
         if (!this.charactersCompleted.isEmpty()) {
-            HashSet<String> localizedChars = new HashSet<>();
+            ArrayList<String> localizedChars = new ArrayList<>();
             for (AbstractPlayer chars : CardCrawlGame.characterManager.getAllCharacters()) {
                 if (!this.charactersCompleted.contains(chars.chosenClass.toString())) {
                     continue;
