@@ -157,6 +157,7 @@ public class StatRewardBox implements IUIElement {
                ImageHelper.tipBoxAtMousePos(this.header, this.body);
             }
         }
+        this.hb.render(sb);
      }
 
     private void renderPotion(SpriteBatch sb) throws 

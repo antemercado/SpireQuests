@@ -10,7 +10,10 @@ import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.FontHelper;
+import com.megacrit.cardcrawl.helpers.Hitbox;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
+import com.megacrit.cardcrawl.helpers.PowerTip;
+import com.megacrit.cardcrawl.helpers.TipHelper;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 import com.megacrit.cardcrawl.localization.UIStrings;
 import com.megacrit.cardcrawl.screens.mainMenu.MainMenuScreen;
@@ -23,6 +26,7 @@ import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
 import spireQuests.quests.QuestReward;
 import spireQuests.quests.Statistics;
+import spireQuests.util.ImageHelper;
 import spireQuests.util.TexLoader;
 
 import static spireQuests.Anniv8Mod.makeID;
@@ -143,6 +147,10 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private int extraRows;
 
     private float flashTimer = FLASH_TIMER;
+
+    private Hitbox trophyHb;
+
+    private float bannerBotDraw_y = 365.0F;
     
     public QuestStatsScreen() {
         allQuests = QuestManager.getAllQuests();
@@ -155,6 +163,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
         questDropdown = new DropdownMenu(this, dropdownList, FontHelper.tipBodyFont, Settings.CREAM_COLOR);
         selectedQuestStats = QuestStats.getAllStats();
         refreshData();
+        trophyHb = new Hitbox(0, 0, 0, 0);
     }
 
     public void open() {
@@ -183,6 +192,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
             for (StatRewardBox box : rewardBoxes) {
                 box.update();
             }
+            this.trophyHb.update();
         }
     }
 
@@ -207,6 +217,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
             renderTrophy(sb);
             renderStats(sb);
             renderRewards(sb);
+            renderTrophyTooltip(sb);
         }
         questDropdown.render(sb, LEFT_ALIGN, DROPDOWN_Y);
         cancelButton.render(sb);
@@ -222,8 +233,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
             sb.draw(BANNER_EXTRA, BANNER_X, midDraw, BANNER_EXTRA.getWidth() * Settings.scale, BANNER_EXTRA.getHeight() * Settings.scale);
         }
 
-        float botDraw = midDraw - BANNER_BOT.getHeight()* Settings.scale;
-        sb.draw(BANNER_BOT, BANNER_X, botDraw, BANNER_BOT.getWidth() * Settings.scale, BANNER_BOT.getHeight() * Settings.scale);
+        sb.draw(BANNER_BOT, BANNER_X, this.bannerBotDraw_y, BANNER_BOT.getWidth() * Settings.scale, BANNER_BOT.getHeight() * Settings.scale);
     }
 
     private void renderTrophy(SpriteBatch sb) {
@@ -264,6 +274,13 @@ public class QuestStatsScreen implements DropdownMenuListener {
             FontHelper.tipBodyFont.getLineHeight(),
             Settings.CREAM_COLOR
         );
+    }
+
+    private void renderTrophyTooltip(SpriteBatch sb) {
+        this.trophyHb.render(sb);
+        if (this.trophyHb.hovered) {
+            ImageHelper.tipBoxAtMousePos(selectedQuestStats.trophyTip.header, selectedQuestStats.trophyTip.body);
+        }
     }
 
     private void renderSummary(SpriteBatch sb) {
@@ -396,6 +413,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
         timesFailed = selectedQuestStats.timesFailed;
         
         extraRows = 0;
+        this.bannerBotDraw_y = (BANNER_TOP_Y - BANNER_BOT.getHeight()) * Settings.scale;
         rewardBoxes.clear();
         badgesToDraw.clear();
 
@@ -405,6 +423,11 @@ public class QuestStatsScreen implements DropdownMenuListener {
 
         HashSet<String> charactersCompletedAs = selectedQuestStats.charactersCompleted;
         extraRows = (charactersCompletedAs.size() - 1) / BADGES_PER_ROW;
+        this.bannerBotDraw_y = (BANNER_TOP_Y - (extraRows * BANNER_EXTRA.getHeight() * Settings.scale)) - BANNER_BOT.getHeight()* Settings.scale;
+        float bannerTotalHeight = (BANNER_TOP.getHeight() + BANNER_BOT.getHeight()) * Settings.scale;
+        bannerTotalHeight += extraRows * BANNER_EXTRA.getHeight() * Settings.scale;
+        this.trophyHb.resize(BANNER_TOP.getWidth() * Settings.scale, bannerTotalHeight);
+        this.trophyHb.move(BANNER_X + BANNER_TOP.getWidth() / 2.0F, this.bannerBotDraw_y + bannerTotalHeight / 2.0F);
 
         for (AbstractPlayer chars : CardCrawlGame.characterManager.getAllCharacters()) {
             if (!charactersCompletedAs.contains(chars.chosenClass.toString())) {
