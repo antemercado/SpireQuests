@@ -115,13 +115,19 @@ public class QuestStats {
                 strbuild.append(uiStrings.TEXT[4]);
                 break;
         }
+
         
         if (!this.charactersCompleted.isEmpty()) {
+            HashSet<String> localizedChars = new HashSet<>();
+            for (AbstractPlayer chars : CardCrawlGame.characterManager.getAllCharacters()) {
+                if (!this.charactersCompleted.contains(chars.chosenClass.toString())) {
+                    continue;
+                }
+                localizedChars.add(chars.getLocalizedCharacterName());
+            }
+
             strbuild.append(uiStrings.TEXT[5]);
-            strbuild.append(String.join(", ", this.charactersCompleted.stream()
-                .map((c) -> CardCrawlGame.characterManager.getCharacter(PlayerClass.valueOf(c)).getLocalizedCharacterName())
-                .collect(Collectors.toList()))
-            );
+            strbuild.append(String.join(", ", localizedChars));
         }
         this.trophyTip.body = strbuild.toString();
     }
