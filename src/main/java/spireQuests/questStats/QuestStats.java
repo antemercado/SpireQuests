@@ -1,6 +1,5 @@
 package spireQuests.questStats;
 
-import static com.badlogic.gdx.graphics.Color.GOLD;
 import static spireQuests.Anniv8Mod.makeID;
 import static spireQuests.Anniv8Mod.makeUIPath;
 
@@ -14,7 +13,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.google.gson.*;
 import com.megacrit.cardcrawl.characters.AbstractPlayer.PlayerClass;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
-import com.megacrit.cardcrawl.characters.CharacterManager;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.helpers.PowerTip;
 import com.megacrit.cardcrawl.localization.UIStrings;
