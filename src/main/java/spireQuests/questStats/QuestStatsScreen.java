@@ -52,10 +52,6 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private static final Texture BANNER_BOT = TexLoader.getTexture(makeUIPath("stats/banner_bottom.png"));
     private static final Texture BANNER_EXTRA = TexLoader.getTexture(makeUIPath("stats/banner_middle.png"));
     public static final Texture TROPHY_OUTLINE = TexLoader.getTexture(makeUIPath("stats/trophy/outline.png"));
-    public static final Texture TROPHY_HIDDEN = TexLoader.getTexture(makeUIPath("stats/trophy/locked.png"));
-    public static final Texture TROPHY_BRONZE = TexLoader.getTexture(makeUIPath("stats/trophy/bronze.png"));
-    public static final Texture TROPHY_SILVER = TexLoader.getTexture(makeUIPath("stats/trophy/silver.png"));
-    public static final Texture TROPHY_GOLD = TexLoader.getTexture(makeUIPath("stats/trophy/gold.png"));
     private static final Texture PROGRESS_BORDER = TexLoader.getTexture(makeUIPath("stats/progress_border.png"));
     private static final Texture PROGRESS_BAR = TexLoader.getTexture(makeUIPath("stats/progress_bar.png"));
 
@@ -236,18 +232,9 @@ public class QuestStatsScreen implements DropdownMenuListener {
         float trophy_X = (BANNER_X + (BANNER_TOP.getWidth() * Settings.scale / 2.0F)) - (TROPHY_WIDTH / 2.0F);
 
         sb.setColor(OUTLINE_COLOR);
-        sb.draw(new TextureRegion(TROPHY_OUTLINE), trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
+        sb.draw(TROPHY_OUTLINE, trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
         sb.setColor(Color.WHITE);
-
-        if (selectedQuestStats.hasGold()) {
-            sb.draw(new TextureRegion(TROPHY_GOLD), trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
-        } else if (selectedQuestStats.hasSilver()) {
-            sb.draw(new TextureRegion(TROPHY_SILVER), trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
-        } else if (selectedQuestStats.hasBronze()) {
-            sb.draw(new TextureRegion(TROPHY_BRONZE), trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
-        } else {
-            sb.draw(new TextureRegion(TROPHY_HIDDEN), trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
-        }
+        sb.draw(selectedQuestStats.getTrophyTexture(), trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
 
         for (int i = 0; i < badgesToDraw.size(); i++) {
             Texture t = badgesToDraw.get(i);
