@@ -5,7 +5,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.evacipated.cardcrawl.modthespire.lib.SpireEnum;
+import com.megacrit.cardcrawl.audio.SoundMaster;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
@@ -162,8 +164,8 @@ public class QuestStatsScreen implements DropdownMenuListener {
         dropdownList.add(0, uiStrings.TEXT[5]);
         questDropdown = new DropdownMenu(this, dropdownList, FontHelper.tipBodyFont, Settings.CREAM_COLOR);
         selectedQuestStats = QuestStats.getAllStats();
-        refreshData();
         trophyHb = new Hitbox(0, 0, 0, 0);
+        refreshData();
     }
 
     public void open() {
@@ -193,6 +195,9 @@ public class QuestStatsScreen implements DropdownMenuListener {
                 box.update();
             }
             this.trophyHb.update();
+            if (this.trophyHb.hovered && (InputHelper.justClickedLeft)) {
+                CardCrawlGame.sound.playAV("SHOVEL", MathUtils.random(0.6F, 0.9F), 0.5F);
+            }
         }
     }
 
@@ -413,9 +418,12 @@ public class QuestStatsScreen implements DropdownMenuListener {
         timesFailed = selectedQuestStats.timesFailed;
         
         extraRows = 0;
-        this.bannerBotDraw_y = (BANNER_TOP_Y - BANNER_BOT.getHeight()) * Settings.scale;
+        this.bannerBotDraw_y = BANNER_TOP_Y - (BANNER_BOT.getHeight() * Settings.scale);
         rewardBoxes.clear();
         badgesToDraw.clear();
+
+        this.trophyHb.resize(0.0F, 0.0F);
+        this.trophyHb.move(-10000.0F, -10000.0F);
 
         if (selectedQuest == null) {
             return;
@@ -427,7 +435,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
         float bannerTotalHeight = (BANNER_TOP.getHeight() + BANNER_BOT.getHeight()) * Settings.scale;
         bannerTotalHeight += extraRows * BANNER_EXTRA.getHeight() * Settings.scale;
         this.trophyHb.resize(BANNER_TOP.getWidth() * Settings.scale, bannerTotalHeight);
-        this.trophyHb.move(BANNER_X + BANNER_TOP.getWidth() / 2.0F, this.bannerBotDraw_y + bannerTotalHeight / 2.0F);
+        this.trophyHb.move(BANNER_X + BANNER_TOP.getWidth() * Settings.scale / 2.0F, this.bannerBotDraw_y + bannerTotalHeight / 2.0F);
 
         for (AbstractPlayer chars : CardCrawlGame.characterManager.getAllCharacters()) {
             if (!charactersCompletedAs.contains(chars.chosenClass.toString())) {
