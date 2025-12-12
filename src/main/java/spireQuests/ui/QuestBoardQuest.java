@@ -174,9 +174,6 @@ public class QuestBoardQuest {
         if (!taken) {
             this.hb.update();
             this.previewHb.update();
-            if (this.previewHb.hovered) {
-                
-            }
             if (QuestBoardScreen.parentProp.numQuestsPickable > 0) {
                 if (this.hb.justHovered) {
                     CardCrawlGame.sound.playV("UI_HOVER", 0.75F);
