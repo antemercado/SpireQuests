@@ -6,12 +6,17 @@ import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.PowerTip;
+import com.megacrit.cardcrawl.potions.AbstractPotion.PotionRarity;
+import com.megacrit.cardcrawl.relics.AbstractRelic.RelicTier;
 import com.megacrit.cardcrawl.saveAndContinue.SaveFile;
 import javassist.CtBehavior;
 import spireQuests.Anniv8Mod;
-import spireQuests.quests.gk.BountyICQuest;
+import spireQuests.quests.QuestReward.GoldReward;
+import spireQuests.quests.QuestReward.PotionReward;
+import spireQuests.quests.QuestReward.RandomRelicReward;
 import spireQuests.util.QuestStrings;
 import spireQuests.util.QuestStringsUtils;
+import spireQuests.util.WeightedList;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -217,6 +222,50 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
         questRewards.add(reward);
 
         return this;
+    }
+
+    protected final AbstractQuest addGenericReward() {
+        useDefaultReward = true;
+
+        if (CardCrawlGame.isInARun()) {
+            QuestReward reward = getGenericRewardWeightedList().getRandom(AbstractDungeon.miscRng);
+            questRewards.add(reward);
+        }
+        this.rewardsText = getRewardsText();
+
+        return this;
+    }
+    
+    private WeightedList<QuestReward> getGenericRewardWeightedList() {
+        WeightedList<QuestReward> rewards = new WeightedList<>();
+        
+        switch (this.difficulty) {
+            default:
+            case EASY:
+                rewards.add(new QuestReward.GoldReward((AbstractDungeon.miscRng.random(50, 70))), 3);
+                rewards.add(new QuestReward.PotionReward(AbstractDungeon.returnRandomPotion(PotionRarity.COMMON, true)), 2);
+                rewards.add(new QuestReward.RandomRelicReward(RelicTier.COMMON), 2);
+                break;
+            case NORMAL:
+                rewards.add(new QuestReward.GoldReward(AbstractDungeon.miscRng.random(90, 120)), 4);
+                rewards.add(new QuestReward.PotionReward(AbstractDungeon.returnRandomPotion(PotionRarity.UNCOMMON, true)), 2);
+                rewards.add(new QuestReward.RandomRelicReward(RelicTier.COMMON), 2);
+                rewards.add(new QuestReward.RandomRelicReward(RelicTier.UNCOMMON), 1);
+                break;
+            case HARD:
+                rewards.add(new QuestReward.GoldReward(AbstractDungeon.miscRng.random(140, 180)), 3);
+                rewards.add(new QuestReward.RandomRelicReward(RelicTier.UNCOMMON), 2);
+                rewards.add(new QuestReward.RandomRelicReward(RelicTier.RARE), 1);
+                rewards.add(new QuestReward.PotionReward(AbstractDungeon.returnRandomPotion(PotionRarity.RARE, true)), 1);
+                break;
+            case CHALLENGE:
+                rewards.add(new QuestReward.GoldReward(AbstractDungeon.miscRng.random(175, 250)), 3);
+                rewards.add(new QuestReward.RandomRelicReward(RelicTier.RARE), 3);
+                rewards.add(new QuestReward.RandomRelicReward(RelicTier.SHOP), 1);
+                break;
+        }
+        
+        return rewards;
     }
 
     public boolean complete() {
