@@ -29,5 +29,13 @@
       "Take #b",
       " damage within #b17 floors."
     ]
+  },
+  "${ModID}:KeyCollector": {
+    "TITLE": "Key Collector",
+    "DESCRIPTION": "Collect the Ruby, Emerald, and Sapphire keys by the end of Act 1.",
+    "AUTHOR": "coda",
+    "TRACKER_TEXT": [
+      "Collect the Ruby, Emerald, and Sapphire keys by the end of Act 1."
+    ]
   }
 }
