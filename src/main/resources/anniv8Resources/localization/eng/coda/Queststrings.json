@@ -32,10 +32,10 @@
   },
   "${ModID}:KeyCollector": {
     "TITLE": "Key Collector",
-    "DESCRIPTION": "Collect the Ruby, Emerald, and Sapphire keys by the end of Act 1.",
+    "DESCRIPTION": "Collect the Ruby, Emerald, and Sapphire keys by the end of the act.",
     "AUTHOR": "coda",
     "TRACKER_TEXT": [
-      "Collect the Ruby, Emerald, and Sapphire keys by the end of Act 1."
+      "Collect the Ruby, Emerald, and Sapphire keys by the end of the act."
     ]
   }
 }
