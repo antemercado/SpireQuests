@@ -23,6 +23,8 @@ public class KeyCollector extends AbstractQuest {
             .add(this);
 
         addReward(new RelicReward(new KeyringRelic()));
+
+        this.isAutoComplete = true;
     }
 
     @Override
