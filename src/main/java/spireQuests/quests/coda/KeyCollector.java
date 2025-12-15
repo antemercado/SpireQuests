@@ -10,7 +10,7 @@ import spireQuests.quests.coda.relics.KeyringRelic;
 public class KeyCollector extends AbstractQuest {
 
     public KeyCollector() {
-        super(QuestType.LONG, QuestDifficulty.CHALLENGE);
+        super(QuestType.SHORT, QuestDifficulty.CHALLENGE);
 
         new PassiveTracker<Boolean>(() -> Settings.hasRubyKey && Settings.hasEmeraldKey && Settings.hasSapphireKey, true)
             {
