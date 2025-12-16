@@ -17,6 +17,7 @@ import com.megacrit.cardcrawl.actions.common.ChangeStateAction;
 import com.megacrit.cardcrawl.actions.common.DamageAction;
 import com.megacrit.cardcrawl.actions.common.GainBlockAction;
 import com.megacrit.cardcrawl.actions.common.MakeTempCardInDiscardAction;
+import com.megacrit.cardcrawl.actions.common.MakeTempCardInDrawPileAction;
 import com.megacrit.cardcrawl.actions.common.RollMoveAction;
 import com.megacrit.cardcrawl.actions.utility.SFXAction;
 import com.megacrit.cardcrawl.actions.utility.ShakeScreenAction;
@@ -80,6 +81,7 @@ public class CharadeMonster extends AbstractSQMonster {
     private boolean redDebuffUpgraded;
     private boolean doneWaking;
     private float dropTime = 0.0F;
+    private int greenDamageAmount;
     
     public CharadeMonster() {
         this(0, 200);
@@ -101,40 +103,39 @@ public class CharadeMonster extends AbstractSQMonster {
         this.redDebuffAmount = 3;
         this.redDebuffUpgraded = false;
         
+        this.greenDamageAmount = 4;
         this.greenAttackAmount = 7;
         this.greenDebuffAmount = 2;
         
-        this.blueDamageAmount = 30;
+        this.blueDamageAmount = 40;
         this.blueBuffAmount = 1;
         
         this.purpleDefendBuff = 5;
-        this.purpleAttackBuff = 1;
+        this.purpleAttackBuff = 2;
         
         if (AbstractDungeon.ascensionLevel >= 3) {
-            this.blueDamageAmount = 34;
+            this.blueDamageAmount = 45;
+            this.redDebuffAmount = 4;
 
             this.greenAttackAmount = 8;
         }
         if (AbstractDungeon.ascensionLevel >= 8) {
             this.redBlockAmount = 35;
-            this.purpleDefendBuff = 7;
+            this.purpleDefendBuff = 8;
         }
         if (AbstractDungeon.ascensionLevel >= 18) {
             this.redDebuffUpgraded = true;
 
+            this.greenDamageAmount = 5;
             this.greenDebuffAmount = 3;
 
             this.blueBuffAmount = 2;
-            this.blueDamageAmount = 17;
+            this.purpleAttackBuff = 3;
         }
 
         addMove(IRONCLAD, Intent.DEFEND_DEBUFF);
-        addMove(SILENT, Intent.ATTACK_DEBUFF, 4, greenAttackAmount, true);
-        if (AbstractDungeon.ascensionLevel >= 18) {
-            addMove(DEFECT, Intent.ATTACK_BUFF, this.blueDamageAmount, 2, true);
-        } else {
-            addMove(DEFECT, Intent.ATTACK_BUFF, this.blueDamageAmount);
-        }
+        addMove(SILENT, Intent.ATTACK_DEBUFF, this.greenDamageAmount, this.greenAttackAmount, true);
+        addMove(DEFECT, Intent.ATTACK_BUFF, this.blueDamageAmount);
         addMove(WATCHER, Intent.DEFEND_BUFF);
         addMove(WAKEUP, Intent.UNKNOWN);
         
@@ -304,7 +305,7 @@ public class CharadeMonster extends AbstractSQMonster {
                 if (this.redDebuffUpgraded) {
                     burn.upgrade();
                 }
-                addToBot(new MakeTempCardInDiscardAction(burn, redDebuffAmount));
+                addToBot(new MakeTempCardInDrawPileAction(burn, redDebuffAmount, true, true));
                 break;
             case 1: // SILENT
                 addToBot(new ChangeStateAction(this, "ATTACK"));
@@ -316,16 +317,8 @@ public class CharadeMonster extends AbstractSQMonster {
                 break;
             case 2: // DEFECT
                 addToBot(new ChangeStateAction(this, "ATTACK_LONG"));
-                if (AbstractDungeon.ascensionLevel >= 18) {
-                    addToBot(new VFXAction(this, new LaserBeamEffect(this.hb.cX - 262.0F * Settings.scale, this.hb.cY + 269.0F * Settings.scale), 0.5F));
-                    addToBot(new DamageAction(Wiz.p(), info));
-                    addToBot(new SFXAction("ATTACK_MAGIC_BEAM"));
-                    addToBot(new WaitMoreAction(0.5F));
-                    addToBot(new DamageAction(Wiz.p(), info));
-                } else {
-                    addToBot(new VFXAction(this, new LaserBeamEffect(this.hb.cX - 262.0F * Settings.scale, this.hb.cY + 269.0F * Settings.scale), 0.5F));
-                    addToBot(new DamageAction(Wiz.p(), info));
-                }
+                addToBot(new VFXAction(this, new LaserBeamEffect(this.hb.cX - 262.0F * Settings.scale, this.hb.cY + 269.0F * Settings.scale), 0.5F));
+                addToBot(new DamageAction(Wiz.p(), info));
                 addToBot(new ApplyPowerAction(this, this, new ArtifactPower(this, blueBuffAmount)));
                 break;
             case 3: // WATCHER
