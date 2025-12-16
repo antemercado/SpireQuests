@@ -15,7 +15,7 @@
   },
   "${ModID}:KeyringRelic": {
     "NAME": "Ambitious Keyring",
-    "FLAVOR": "???",
+    "FLAVOR": "One of these has to open something...",
     "DESCRIPTIONS": [
       "The next Boss chest you open will have an additional relic to choose from."
     ]
