@@ -40,7 +40,7 @@
                             "name": "Blue (Offensive)",
                             "effects": [
                                 {
-                                    "name": "30",
+                                    "name": "40",
                                     "color": "DAMAGE"
                                 },
                                 {
@@ -57,7 +57,7 @@
                                     "color": "BUFF"
                                 },
                                 {
-                                    "name": "Str +1",
+                                    "name": "Str +2",
                                     "color": "BUFF"
                                 }
                             ]
@@ -74,7 +74,7 @@
                             "name": "Red (Defensive)",
                             "effects": [
                                 {
-                                    "name": "Burn 3",
+                                    "name": "Burn 4",
                                     "color": "DEBUFF"
                                 },
                                 {
@@ -100,7 +100,7 @@
                             "name": "Blue (Offensive)",
                             "effects": [
                                 {
-                                    "name": "34",
+                                    "name": "45",
                                     "color": "DAMAGE"
                                 },
                                 {
@@ -117,7 +117,7 @@
                                     "color": "BUFF"
                                 },
                                 {
-                                    "name": "Str +1",
+                                    "name": "Str +2",
                                     "color": "BUFF"
                                 }
                             ]
@@ -134,7 +134,7 @@
                             "name": "Red (Defensive)",
                             "effects": [
                                 {
-                                    "name": "Burn 3",
+                                    "name": "Burn 4",
                                     "color": "DEBUFF"
                                 },
                                 {
@@ -147,11 +147,11 @@
                             "name": "Green (Offensive)",
                             "effects": [
                                 {
-                                    "name": "4x8",
+                                    "name": "5x8",
                                     "color": "DAMAGE"
                                 },
                                 {
-                                    "name": "Weak 2",
+                                    "name": "Weak 3",
                                     "color": "DEBUFF"
                                 }
                             ]
@@ -160,11 +160,11 @@
                             "name": "Blue (Offensive)",
                             "effects": [
                                 {
-                                    "name": "34",
+                                    "name": "45",
                                     "color": "DAMAGE"
                                 },
                                 {
-                                    "name": "Artifact 1",
+                                    "name": "Artifact 2",
                                     "color": "BUFF"
                                 }
                             ]
@@ -173,11 +173,11 @@
                             "name": "Purple (Defensive)",
                             "effects": [
                                 {
-                                    "name": "Spirit Shield 7",
+                                    "name": "Spirit Shield 8",
                                     "color": "BUFF"
                                 },
                                 {
-                                    "name": "Str +1",
+                                    "name": "Str +3",
                                     "color": "BUFF"
                                 }
                             ]
@@ -194,7 +194,7 @@
                             "name": "Red (Defensive)",
                             "effects": [
                                 {
-                                    "name": "Burn+ 3",
+                                    "name": "Burn+ 4",
                                     "color": "DEBUFF"
                                 },
                                 {

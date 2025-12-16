@@ -114,10 +114,11 @@ public class CharadeMonster extends AbstractSQMonster {
         this.purpleAttackBuff = 2;
         
         if (AbstractDungeon.ascensionLevel >= 3) {
-            this.blueDamageAmount = 45;
             this.redDebuffAmount = 4;
 
             this.greenAttackAmount = 8;
+
+            this.blueDamageAmount = 45;
         }
         if (AbstractDungeon.ascensionLevel >= 8) {
             this.redBlockAmount = 35;
