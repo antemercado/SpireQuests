@@ -5,7 +5,8 @@
       "",
       "",
       "Enable quests to have costs to pick up.",
-      "Enable Master Deck visuals for Questbound cards."
+      "Enable Master Deck visuals for Questbound cards.",
+      "Enable tooltips to view trophy status on the quest board."
     ]
   },
   "${ModID}:QuestUI": {
@@ -110,6 +111,16 @@
       "Quest Log",
       "As you complete quests in the Spire you'll earn trophies and badges. You can view your progress toward them in the Quest Log section of the Statistics menu.",
       "Continue"
+    ]
+  },
+  "${ModID}:QuestStats": {
+    "TEXT": [
+      "Trophy Stats",
+      "You've earned a #yBronze #yMedal for this quest! ",
+      "You've earned a #ySilver #yMedal for this quest! ",
+      "You've earned a #yGold #yMedal for this quest! ",
+      "You haven't earned a medal for this quest yet. ",
+      "You've completed this quest as: "
     ]
   }
 }

@@ -115,7 +115,7 @@ public class StatRewardBox implements IUIElement {
         }
 
         if (this.card != null) {
-            Color cardBGColor = Color.WHITE;
+            Color cardBGColor;
             switch (this.card.color) {
                 case RED:
                     cardBGColor = Color.SCARLET;
@@ -128,6 +128,9 @@ public class StatRewardBox implements IUIElement {
                     break;
                 case PURPLE:
                     cardBGColor = Settings.PURPLE_COLOR;
+                    break;
+                default:
+                    cardBGColor = Color.WHITE;
                     break;
             }
             sb.setColor(cardBGColor);
@@ -157,6 +160,7 @@ public class StatRewardBox implements IUIElement {
                ImageHelper.tipBoxAtMousePos(this.header, this.body);
             }
         }
+        this.hb.render(sb);
      }
 
     private void renderPotion(SpriteBatch sb) throws 

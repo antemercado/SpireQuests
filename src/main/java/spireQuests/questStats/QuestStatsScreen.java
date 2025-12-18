@@ -5,11 +5,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.evacipated.cardcrawl.modthespire.lib.SpireEnum;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.FontHelper;
+import com.megacrit.cardcrawl.helpers.Hitbox;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 import com.megacrit.cardcrawl.localization.UIStrings;
@@ -23,6 +25,7 @@ import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
 import spireQuests.quests.QuestReward;
 import spireQuests.quests.Statistics;
+import spireQuests.util.ImageHelper;
 import spireQuests.util.TexLoader;
 
 import static spireQuests.Anniv8Mod.makeID;
@@ -52,10 +55,6 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private static final Texture BANNER_BOT = TexLoader.getTexture(makeUIPath("stats/banner_bottom.png"));
     private static final Texture BANNER_EXTRA = TexLoader.getTexture(makeUIPath("stats/banner_middle.png"));
     public static final Texture TROPHY_OUTLINE = TexLoader.getTexture(makeUIPath("stats/trophy/outline.png"));
-    public static final Texture TROPHY_HIDDEN = TexLoader.getTexture(makeUIPath("stats/trophy/locked.png"));
-    public static final Texture TROPHY_BRONZE = TexLoader.getTexture(makeUIPath("stats/trophy/bronze.png"));
-    public static final Texture TROPHY_SILVER = TexLoader.getTexture(makeUIPath("stats/trophy/silver.png"));
-    public static final Texture TROPHY_GOLD = TexLoader.getTexture(makeUIPath("stats/trophy/gold.png"));
     private static final Texture PROGRESS_BORDER = TexLoader.getTexture(makeUIPath("stats/progress_border.png"));
     private static final Texture PROGRESS_BAR = TexLoader.getTexture(makeUIPath("stats/progress_bar.png"));
 
@@ -147,6 +146,10 @@ public class QuestStatsScreen implements DropdownMenuListener {
     private int extraRows;
 
     private float flashTimer = FLASH_TIMER;
+
+    private Hitbox trophyHb;
+
+    private float bannerBotDraw_y = 365.0F;
     
     public QuestStatsScreen() {
         allQuests = QuestManager.getAllQuests();
@@ -158,6 +161,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
         dropdownList.add(0, uiStrings.TEXT[5]);
         questDropdown = new DropdownMenu(this, dropdownList, FontHelper.tipBodyFont, Settings.CREAM_COLOR);
         selectedQuestStats = QuestStats.getAllStats();
+        trophyHb = new Hitbox(0, 0, 0, 0);
         refreshData();
     }
 
@@ -187,6 +191,10 @@ public class QuestStatsScreen implements DropdownMenuListener {
             for (StatRewardBox box : rewardBoxes) {
                 box.update();
             }
+            this.trophyHb.update();
+            if (this.trophyHb.hovered && (InputHelper.justClickedLeft)) {
+                CardCrawlGame.sound.playAV("SHOVEL", MathUtils.random(0.6F, 0.9F), 0.5F);
+            }
         }
     }
 
@@ -211,6 +219,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
             renderTrophy(sb);
             renderStats(sb);
             renderRewards(sb);
+            renderTrophyTooltip(sb);
         }
         questDropdown.render(sb, LEFT_ALIGN, DROPDOWN_Y);
         cancelButton.render(sb);
@@ -226,8 +235,7 @@ public class QuestStatsScreen implements DropdownMenuListener {
             sb.draw(BANNER_EXTRA, BANNER_X, midDraw, BANNER_EXTRA.getWidth() * Settings.scale, BANNER_EXTRA.getHeight() * Settings.scale);
         }
 
-        float botDraw = midDraw - BANNER_BOT.getHeight()* Settings.scale;
-        sb.draw(BANNER_BOT, BANNER_X, botDraw, BANNER_BOT.getWidth() * Settings.scale, BANNER_BOT.getHeight() * Settings.scale);
+        sb.draw(BANNER_BOT, BANNER_X, this.bannerBotDraw_y, BANNER_BOT.getWidth() * Settings.scale, BANNER_BOT.getHeight() * Settings.scale);
     }
 
     private void renderTrophy(SpriteBatch sb) {
@@ -236,18 +244,9 @@ public class QuestStatsScreen implements DropdownMenuListener {
         float trophy_X = (BANNER_X + (BANNER_TOP.getWidth() * Settings.scale / 2.0F)) - (TROPHY_WIDTH / 2.0F);
 
         sb.setColor(OUTLINE_COLOR);
-        sb.draw(new TextureRegion(TROPHY_OUTLINE), trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
+        sb.draw(TROPHY_OUTLINE, trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
         sb.setColor(Color.WHITE);
-
-        if (selectedQuestStats.hasGold()) {
-            sb.draw(new TextureRegion(TROPHY_GOLD), trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
-        } else if (selectedQuestStats.hasSilver()) {
-            sb.draw(new TextureRegion(TROPHY_SILVER), trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
-        } else if (selectedQuestStats.hasBronze()) {
-            sb.draw(new TextureRegion(TROPHY_BRONZE), trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
-        } else {
-            sb.draw(new TextureRegion(TROPHY_HIDDEN), trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
-        }
+        sb.draw(selectedQuestStats.getTrophyTexture(), trophy_X, TROPHY_Y, TROPHY_WIDTH, TROPHY_HEIGHT);
 
         for (int i = 0; i < badgesToDraw.size(); i++) {
             Texture t = badgesToDraw.get(i);
@@ -277,6 +276,13 @@ public class QuestStatsScreen implements DropdownMenuListener {
             FontHelper.tipBodyFont.getLineHeight(),
             Settings.CREAM_COLOR
         );
+    }
+
+    private void renderTrophyTooltip(SpriteBatch sb) {
+        this.trophyHb.render(sb);
+        if (this.trophyHb.hovered) {
+            ImageHelper.tipBoxAtMousePos(selectedQuestStats.trophyTip.header, selectedQuestStats.trophyTip.body);
+        }
     }
 
     private void renderSummary(SpriteBatch sb) {
@@ -409,8 +415,12 @@ public class QuestStatsScreen implements DropdownMenuListener {
         timesFailed = selectedQuestStats.timesFailed;
         
         extraRows = 0;
+        this.bannerBotDraw_y = BANNER_TOP_Y - (BANNER_BOT.getHeight() * Settings.scale);
         rewardBoxes.clear();
         badgesToDraw.clear();
+
+        this.trophyHb.resize(0.0F, 0.0F);
+        this.trophyHb.move(-10000.0F, -10000.0F);
 
         if (selectedQuest == null) {
             return;
@@ -418,6 +428,11 @@ public class QuestStatsScreen implements DropdownMenuListener {
 
         HashSet<String> charactersCompletedAs = selectedQuestStats.charactersCompleted;
         extraRows = (charactersCompletedAs.size() - 1) / BADGES_PER_ROW;
+        this.bannerBotDraw_y = (BANNER_TOP_Y - (extraRows * BANNER_EXTRA.getHeight() * Settings.scale)) - BANNER_BOT.getHeight()* Settings.scale;
+        float bannerTotalHeight = (BANNER_TOP.getHeight() + BANNER_BOT.getHeight()) * Settings.scale;
+        bannerTotalHeight += extraRows * BANNER_EXTRA.getHeight() * Settings.scale;
+        this.trophyHb.resize(BANNER_TOP.getWidth() * Settings.scale, bannerTotalHeight);
+        this.trophyHb.move(BANNER_X + BANNER_TOP.getWidth() * Settings.scale / 2.0F, this.bannerBotDraw_y + bannerTotalHeight / 2.0F);
 
         for (AbstractPlayer chars : CardCrawlGame.characterManager.getAllCharacters()) {
             if (!charactersCompletedAs.contains(chars.chosenClass.toString())) {
