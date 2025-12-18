@@ -35,6 +35,7 @@ import com.megacrit.cardcrawl.localization.MonsterStrings;
 import com.megacrit.cardcrawl.powers.ArtifactPower;
 import com.megacrit.cardcrawl.powers.StrengthPower;
 import com.megacrit.cardcrawl.powers.WeakPower;
+import com.megacrit.cardcrawl.relics.RunicDome;
 import com.megacrit.cardcrawl.vfx.AbstractGameEffect;
 import com.megacrit.cardcrawl.vfx.combat.LaserBeamEffect;
 import com.megacrit.cardcrawl.vfx.combat.ScreenOnFireEffect;
@@ -197,7 +198,13 @@ public class CharadeMonster extends AbstractSQMonster {
             return;
         }
         currColor = moveOrder.get(this.turnsTaken % moveOrder.size());
-        changeColor(currColor);
+        
+        if (AbstractDungeon.player.hasRelic(RunicDome.ID)) {
+            changeColor(OrbColor.NONE);
+        } else {
+            changeColor(currColor);
+        }
+
         switch (currColor) {
             case RED:
                 setMoveShortcut(IRONCLAD);
