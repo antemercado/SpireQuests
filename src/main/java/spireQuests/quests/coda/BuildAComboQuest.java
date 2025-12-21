@@ -1,5 +1,7 @@
 package spireQuests.quests.coda;
 
+import java.util.ArrayList;
+
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 
@@ -43,7 +45,14 @@ public class BuildAComboQuest extends AbstractQuest {
 
     @Override
     public boolean canSpawn() {
-        return AbstractDungeon.actNum >= 2;
+
+        ArrayList<AbstractCard> deck = AbstractDungeon.player.masterDeck.group;
+        
+        boolean has1 = deck.stream().anyMatch(c -> c.cost == 1);
+        boolean has2 = deck.stream().anyMatch(c -> c.cost == 2);
+        boolean has3 = deck.stream().anyMatch(c -> c.cost == 3);
+        
+        return (has1 && has2 && has3);
     }
     
 }
