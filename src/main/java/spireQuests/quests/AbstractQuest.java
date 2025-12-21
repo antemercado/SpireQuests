@@ -200,8 +200,9 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
 
         if (!questTracker.hidden) {
             if (trackerTextIndex >= questStrings.TRACKER_TEXT.length) {
-                throw new RuntimeException("Quest " + id + " needs more entries in TRACKER_TEXT for its trackers");
+               throw new RuntimeException("Quest " + id + " needs more entries in TRACKER_TEXT for its trackers");
             }
+            
             questTracker.text = questStrings.TRACKER_TEXT[trackerTextIndex];
             trackerTextIndex++;
         }
@@ -304,6 +305,15 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
         trackers.clear();
         triggers.clear();
         trackers.add(new QuestFailedTracker());
+    }
+
+    public void forceComplete() {
+        if (failed) Anniv8Mod.logger.warn("Forcefully completed quest that was failed {}", this.id);
+
+        complete = true;
+        trackers.clear();
+        triggers.clear();
+        trackers.add(new QuestCompleteTracker());
     }
 
     //override if you want different completion SFX.
