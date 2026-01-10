@@ -60,7 +60,7 @@
   },
   "${ModID}:HellbentQuest": {
     "TITLE": "Hellbent",
-    "DESCRIPTION": "End 5 turns with no cards in hand.",
+    "DESCRIPTION": "End #b5 turns with no cards in hand.",
     "AUTHOR": "coda",
     "TRACKER_TEXT": [
       "Turns with no cards"
