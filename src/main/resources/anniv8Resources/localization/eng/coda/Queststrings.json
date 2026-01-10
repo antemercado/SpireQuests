@@ -58,8 +58,8 @@
       "Orb cut down"
     ]
   },
-  "${ModID}:HeckYeahQuest": {
-    "TITLE": "Heck Yeah",
+  "${ModID}:HellbentQuest": {
+    "TITLE": "Hellbent",
     "DESCRIPTION": "End 5 turns with no cards in hand.",
     "AUTHOR": "coda",
     "TRACKER_TEXT": [

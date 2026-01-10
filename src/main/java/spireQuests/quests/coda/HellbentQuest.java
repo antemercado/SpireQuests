@@ -5,9 +5,9 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import spireQuests.patches.QuestTriggers;
 import spireQuests.quests.AbstractQuest;
 
-public class HeckYeahQuest extends AbstractQuest {
+public class HellbentQuest extends AbstractQuest {
 
-    public HeckYeahQuest() {
+    public HellbentQuest() {
         super(QuestType.SHORT, QuestDifficulty.NORMAL);
 
         new TriggerTracker<>(QuestTriggers.TURN_END, 5)
