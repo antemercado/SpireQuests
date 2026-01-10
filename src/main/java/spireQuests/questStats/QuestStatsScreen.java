@@ -173,6 +173,8 @@ public class QuestStatsScreen implements DropdownMenuListener {
         selectedQuestStats = QuestStats.getAllStats();
         questDropdown = new DropdownMenu(this, dropdownList, FontHelper.tipBodyFont, Settings.CREAM_COLOR);
         refreshData();
+        
+        Statistics.logStatistics(QuestManager.getAllQuests());
     }
 
     public void update() {
