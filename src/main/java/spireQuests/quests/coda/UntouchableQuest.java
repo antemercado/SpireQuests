@@ -9,7 +9,7 @@ import spireQuests.util.Wiz;
 public class UntouchableQuest extends AbstractQuest {
 
     public UntouchableQuest() {
-        super(QuestType.SHORT, QuestDifficulty.NORMAL);
+        super(QuestType.SHORT, QuestDifficulty.HARD);
 
         new TriggerTracker<>(QuestTriggers.COMBAT_END, 3)
             .triggerCondition((x) -> AbstractDungeon.player.damagedThisCombat <= 0)
