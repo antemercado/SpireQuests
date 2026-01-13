@@ -30,7 +30,7 @@ public class TripleDipperQuest extends AbstractQuest {
 
     @Override
     public boolean canSpawn() {
-        return AbstractDungeon.actNum == 2;
+        return AbstractDungeon.actNum > 1;
     }
 
 }
