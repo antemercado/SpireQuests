@@ -76,7 +76,7 @@
   },
   "${ModID}:TripleDipperQuest": {
     "TITLE": "Triple Dipper",
-    "DESCRIPTION": "Add 3 Attacks, 3 Skills and 3 Powers to your deck.",
+    "DESCRIPTION": "Add #b3 #yAttack, #b3 #ySkill and #b3 #yPower cards to your deck.",
     "AUTHOR": "coda",
     "TRACKER_TEXT": [
       "Attacks added",
