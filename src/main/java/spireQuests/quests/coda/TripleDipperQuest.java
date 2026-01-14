@@ -2,7 +2,7 @@ package spireQuests.quests.coda;
 
 import com.megacrit.cardcrawl.cards.AbstractCard.CardType;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
-import com.megacrit.cardcrawl.relics.OrangePellets;
+import spireQuests.quests.coda.relics.SpearmintPelletRelic;
 
 import spireQuests.patches.QuestTriggers;
 import spireQuests.quests.AbstractQuest;
@@ -25,7 +25,7 @@ public class TripleDipperQuest extends AbstractQuest {
             .triggerCondition((c) -> c.type == CardType.POWER)
             .add(this);
 
-        addReward(new QuestReward.RelicReward(new OrangePellets()));
+        addReward(new QuestReward.RelicReward(new SpearmintPelletRelic()));
     }
 
     @Override
