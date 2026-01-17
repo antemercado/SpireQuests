@@ -236,6 +236,10 @@ public class QuestManager {
     }
 
     public static void failQuest(AbstractQuest quest) {
+        // Don't want you failing quests you have already completed.
+        if (quest.isCompleted()) {
+            return;
+        }
         quest.forceFail();
         quest.onFail();
         completeQuest(quest);
@@ -267,7 +271,7 @@ public class QuestManager {
 
     public static void failAllActiveQuests() {
         for (AbstractQuest q : quests()) {
-            q.forceFail();
+            failQuest(q);
         }
     }
 
