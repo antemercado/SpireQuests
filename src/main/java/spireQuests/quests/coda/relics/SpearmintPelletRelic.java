@@ -45,7 +45,6 @@ public class SpearmintPelletRelic extends AbstractSQRelic {
 
             addToBot((AbstractGameAction)new RelicAboveCreatureAction((AbstractCreature)AbstractDungeon.player, this));
             addToBot((AbstractGameAction)new GainEnergyAction(1));
-            addToBot((AbstractGameAction)new DrawCardAction((AbstractCreature)AbstractDungeon.player, 1));
 
             SKILL = false;
             POWER = false;
