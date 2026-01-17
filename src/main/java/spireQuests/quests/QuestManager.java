@@ -269,7 +269,7 @@ public class QuestManager {
         //quest ui
     }
 
-    public static void failAllActiveQuests() {
+    public static void failAllIncompleteActiveQuests() {
         for (AbstractQuest q : quests()) {
             if (!q.isCompleted() && !q.isFailed()) {
                 q.forceFail();
