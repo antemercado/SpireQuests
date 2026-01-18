@@ -20,7 +20,6 @@ public class RapidImprovisationQuest extends AbstractQuest {
     public RapidImprovisationQuest() {
         super(QuestType.SHORT, QuestDifficulty.NORMAL);
 
-        titleScale = 0.9f;
 
         questboundCards = new ArrayList<>();
         questboundCards.add(new Metamorphosis());

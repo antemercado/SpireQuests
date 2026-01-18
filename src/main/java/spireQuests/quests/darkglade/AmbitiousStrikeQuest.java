@@ -27,7 +27,6 @@ public class AmbitiousStrikeQuest extends AbstractQuest {
         }).add(this);
 
         useDefaultReward = false;
-        titleScale = 1.0f;
     }
 
     @Override

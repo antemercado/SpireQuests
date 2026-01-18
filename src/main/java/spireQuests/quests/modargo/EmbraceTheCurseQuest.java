@@ -35,7 +35,6 @@ public class EmbraceTheCurseQuest extends AbstractQuest {
 
         needHoverTip = true;
         isAutoComplete = true;
-        titleScale = 0.9f;
     }
 
     @Override

@@ -36,7 +36,6 @@ public class LessonOfTheCoreQuest extends AbstractQuest {
         AbstractCard reboot = new Reboot();
         reboot.upgrade();
         addReward(new QuestReward.CardReward(reboot));
-        titleScale = 0.9f;
 
         useDefaultReward = false;
     }

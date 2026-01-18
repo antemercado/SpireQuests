@@ -16,7 +16,6 @@ public class VampireInTrainingQuest extends AbstractQuest {
     public VampireInTrainingQuest() {
         super(QuestType.LONG, QuestDifficulty.EASY);
 
-        titleScale = 0.85f;
 
         new TriggerTracker<>(QuestTriggers.PLAY_CARD, 66)
                 .triggerCondition(card -> card.tags.contains(AbstractCard.CardTags.STARTER_STRIKE))

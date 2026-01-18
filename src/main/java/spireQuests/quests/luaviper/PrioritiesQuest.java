@@ -31,7 +31,6 @@ public class PrioritiesQuest extends AbstractQuest {
     public PrioritiesQuest() {
         super(QuestType.SHORT, QuestDifficulty.HARD);
 
-        titleScale = 1.0f;
         isAutoComplete = true;
         useDefaultReward = false;
 

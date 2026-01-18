@@ -54,7 +54,6 @@ public class BattleAtTheEndTimeQuest extends AbstractQuest {
         }.add(this);
 
         addReward(new QuestReward.PotionReward(new TickAndTockPotion()));
-        titleScale = 0.8f;
     }
 
     public static int countPotions() {
