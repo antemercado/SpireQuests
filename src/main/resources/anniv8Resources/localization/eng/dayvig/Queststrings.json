@@ -20,9 +20,9 @@
     "DESCRIPTION": "Have a deck with exactly #b10 Attacks, #b10 Skills and #b5 Powers.",
     "AUTHOR": "Dayvig",
     "TRACKER_TEXT": [
-      "Attacks in Deck",
-      "Skills in Deck",
-      "Powers in Deck"
+      "Attack cards",
+      "Skill cards",
+      "Power cards"
     ]
   },
   "${ModID}:ZeroCost": {
