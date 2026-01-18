@@ -72,6 +72,7 @@ public class TreasureMapQuest extends AbstractQuest implements MarkNodeQuest {
 
         isAutoComplete = true;
         isAutoFail = true;
+        useDefaultReward = false;
     }
 
     @Override
