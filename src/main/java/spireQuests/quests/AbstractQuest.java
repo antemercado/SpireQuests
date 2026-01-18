@@ -6,6 +6,7 @@ import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.helpers.PowerTip;
 import com.megacrit.cardcrawl.random.Random;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
@@ -17,6 +18,7 @@ import spireQuests.Anniv8Mod;
 import spireQuests.patches.ShowMarkedNodesOnMapPatch;
 import spireQuests.questStats.QuestStatManager;
 import spireQuests.questStats.StatRewardBox;
+import spireQuests.ui.QuestBoardQuest;
 import spireQuests.util.QuestStrings;
 import spireQuests.util.QuestStringsUtils;
 import spireQuests.util.WeightedList;
@@ -60,7 +62,6 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
     public String description;
     public String author;
     public float width = 0;
-    protected float titleScale = 1.2f; // change as needed for longer titles
     public boolean needHoverTip = false;
 
     public boolean useDefaultReward;
@@ -143,6 +144,13 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
     }
 
     public float getTitleScale() {
+        // No more than 320px @ 1080p
+        float titleScale = 1.2f;
+        float titleWidth = FontHelper.getWidth(QuestBoardQuest.QUEST_TITLE_FONT, this.name, titleScale);
+        while (titleWidth > QuestBoardQuest.MAX_TITLE_WIDTH) {
+            titleScale -= 0.05f;
+            titleWidth = FontHelper.getWidth(QuestBoardQuest.QUEST_TITLE_FONT, this.name, titleScale);
+        }
         return titleScale;
     }
 
