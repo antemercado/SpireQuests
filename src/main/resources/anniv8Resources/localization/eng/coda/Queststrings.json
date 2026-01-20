@@ -83,5 +83,18 @@
       "Skills added",
       "Powers added"
     ]
+  },
+  "${ModID}:WantedQuest": {
+    "TITLE": "Monsted Hunter",
+    "DESCRIPTION": "Defeat 3 elites this act.",
+    "AUTHOR": "coda",
+    "TRACKER_TEXT": [
+      "Damage remaining: ",
+      "Floors remaining: "
+    ],
+    "EXTRA_TEXT": [
+      "Take #b",
+      " damage within #b17 floors."
+    ]
   }
 }
