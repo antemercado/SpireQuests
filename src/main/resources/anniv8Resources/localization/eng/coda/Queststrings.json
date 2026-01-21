@@ -84,17 +84,15 @@
       "Powers added"
     ]
   },
-  "${ModID}:WantedQuest": {
-    "TITLE": "Monsted Hunter",
+  "${ModID}:MonsterHunterQuest": {
+    "TITLE": "Monster Hunter",
     "DESCRIPTION": "Defeat 3 elites this act.",
     "AUTHOR": "coda",
     "TRACKER_TEXT": [
-      "Damage remaining: ",
-      "Floors remaining: "
+      "Elites remaining this act"
     ],
     "EXTRA_TEXT": [
-      "Take #b",
-      " damage within #b17 floors."
+      "Monsters Hunted"
     ]
   }
 }
