@@ -85,7 +85,11 @@ public class StatRewardBox implements IUIElement {
         }
         if (reward instanceof CardChoiceReward) {
             this.cards = ((CardChoiceReward)reward).getCards();
-            this.header = uiStrings.TEXT[6];
+            if (((CardChoiceReward)reward).isColorless) {
+                this.header = uiStrings.TEXT[7];
+            } else {
+                this.header = uiStrings.TEXT[6];
+            }
             this.img = new TextureRegion(CARD_CHOICE_TEX);
             this.type = QuestRewardType.CARD_CHOICE;
         }
@@ -196,7 +200,22 @@ public class StatRewardBox implements IUIElement {
                 card.renderHoverShadow(sb);
                 card.render(sb);
             } else if (this.type.equals(QuestRewardType.CARD_CHOICE)){
-                ImageHelper.tipBoxAtMousePos(this.header, this.body);
+                if (this.cards != null && !this.cards.isEmpty()) {
+                    float gap = 25.0F * Settings.scale;
+                    float cardWidth = AbstractCard.RAW_W * this.cards.get(0).drawScale * Settings.scale;
+                    float totalWidth = (this.cards.size() * cardWidth) + ((this.cards.size() - 1) * gap);
+                    float startX = InputHelper.mX - totalWidth / 2.0F;
+                    float aboveY = (this.yPos + HEIGHT) + ((AbstractCard.RAW_W *  this.cards.get(0).drawScale) * Settings.scale);
+                    for (int i = 0; i < this.cards.size(); i++) {
+                        AbstractCard c = this.cards.get(i);
+                        c.current_x = startX + cardWidth * 0.5F + i * (cardWidth + gap);
+                        c.current_y = aboveY;
+                        c.renderHoverShadow(sb);
+                        c.render(sb);
+                    }
+                } else {
+                    ImageHelper.tipBoxAtMousePos(this.header, this.body);
+                }
             } else {
                 ImageHelper.tipBoxAtMousePos(this.header, this.body);
             }
@@ -250,9 +269,9 @@ public class StatRewardBox implements IUIElement {
             CardCrawlGame.sound.play("UI_HOVER");
         }
         if (this.hb.hovered && InputHelper.justClickedRight) {
-            if (card != null) {
+            if (type.equals(QuestRewardType.CARD)) {
                 CardCrawlGame.cardPopup.open(card);
-            } else if (relic != null) {
+            } else if (type.equals(QuestRewardType.RELIC)) {
                 CardCrawlGame.relicPopup.open(relic);
             }
         }

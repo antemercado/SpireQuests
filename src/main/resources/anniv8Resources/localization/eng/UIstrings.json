@@ -45,8 +45,9 @@
       "a random Rare relic",
       "a random relic",
       "Gain #b%d Max HP.",
-      "Get a choice of a card reward.",
-      "Choose one of the following cards: %s"
+      "Choose a card to obtain.",
+      "Choose one of the following cards: %s",
+      "Choose a Colorless Card to obtain"
     ]
   },
   "${ModID}:SingleCardReward": {
@@ -111,7 +112,8 @@
       "Max HP Reward",
       "Random Quest Reward",
       "This quest has a random reward each run!",
-      "Card Reward"
+      "Card Reward",
+      "Colorless Card Reward"
     ]
   },
   "${ModID}:StatisticsFTUE": {

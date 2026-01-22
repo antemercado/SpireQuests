@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.cards.AbstractCard.CardColor;
 import com.megacrit.cardcrawl.cards.CardSave;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
@@ -353,9 +354,16 @@ public abstract class QuestReward {
 
         private static final TextureRegion IMG = TexLoader.getTextureAsAtlasRegion(makeUIPath("card_reward.png"));
         private ArrayList<AbstractCard> rewardCards;
+        public boolean isColorless = false;
 
         public CardChoiceReward() {
             super(TEXT[7]);
+            this.rewardCards = new ArrayList<>();
+        }
+
+        public CardChoiceReward(boolean isColorless) {
+            super(TEXT[9]);
+            this.isColorless = true;
             this.rewardCards = new ArrayList<>();
         }
 
@@ -402,7 +410,12 @@ public abstract class QuestReward {
         }
 
         private RewardItem getRewardItem() {
-            RewardItem ret = new RewardItem();
+            RewardItem ret;
+            if (this.isColorless) {
+                ret = new RewardItem(CardColor.COLORLESS);
+            } else {
+                ret = new RewardItem();
+            }
             if (rewardCards != null && !rewardCards.isEmpty()) {
                 ret.cards = rewardCards;
                 for (AbstractCard c : ret.cards) {
