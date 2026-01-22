@@ -1,7 +1,5 @@
 package spireQuests.quests.coda;
 
-import static spireQuests.Anniv8Mod.logger;
-
 import java.util.ArrayList;
 
 import com.megacrit.cardcrawl.cards.AbstractCard;
@@ -10,11 +8,9 @@ import com.megacrit.cardcrawl.cards.colorless.Mayhem;
 import com.megacrit.cardcrawl.cards.colorless.Metamorphosis;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
-import com.megacrit.cardcrawl.dungeons.Exordium;
 import com.megacrit.cardcrawl.helpers.CardLibrary;
 import com.megacrit.cardcrawl.rooms.MonsterRoomElite;
 
-import basemod.devcommands.hand.Hand;
 import spireQuests.patches.QuestTriggers;
 import spireQuests.questStats.StatRewardBox;
 import spireQuests.quests.AbstractQuest;
